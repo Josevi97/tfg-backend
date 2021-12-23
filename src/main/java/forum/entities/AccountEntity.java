@@ -1,0 +1,109 @@
+package forum.entities;
+
+import java.time.LocalDateTime;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
+
+@Entity
+@Table(name = "account")
+public class AccountEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "login", unique = true, length = 255, nullable = false)
+    private String login;
+
+    @Column(name = "email", unique = true, length = 255, nullable = false)
+    private String email;
+
+    @Column(name = "password", length = 255, nullable = false)
+    private String password;
+
+    @Column(name = "username", length = 255, nullable = true)
+    private String username;
+
+    @Column(name = "avatar", length = 255, nullable = true)
+    private String avatar;
+
+    @Column(name = "is_admin", nullable = false)
+    private Boolean isAdmin;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "last_session_at", nullable = false)
+    private LocalDateTime lastSessionAt;
+
+    public AccountEntity() {
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public void setAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setLastSessionAt(LocalDateTime lastSessionAt) {
+        this.lastSessionAt = lastSessionAt;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public String getLogin() {
+        return this.login;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public String getAvatar() {
+        return this.avatar;
+    }
+
+    public Boolean isAdmin() {
+        return this.isAdmin;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public LocalDateTime getLastSessionAt() {
+        return this.lastSessionAt;
+    }
+}
