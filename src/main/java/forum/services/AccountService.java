@@ -11,8 +11,8 @@ import forum.beans.AccountBean;
 import forum.entities.AccountEntity;
 import forum.exceptions.AccountAlreadyExistsException;
 import forum.exceptions.AccountNotFoundException;
+import forum.exceptions.IlegalAccountArgumentsException;
 import forum.exceptions.InsufficientPrivilegesException;
-import forum.exceptions.InvalidAccountException;
 import forum.exceptions.InvalidSessionException;
 import forum.helpers.AccountHelper;
 import forum.repositories.AccountRepository;
@@ -40,14 +40,14 @@ public class AccountService {
             throw new AccountNotFoundException();
         }
 
-        return this.accountRepository.findById(id).get();
+        return AccountHelper.getFixedAccountEntity(this.accountRepository.findById(id).get());
     }
 
     public void createAccount(AccountBean accountBean)
-            throws InvalidAccountException, AccountAlreadyExistsException, InvalidSessionException,
+            throws IlegalAccountArgumentsException, AccountAlreadyExistsException, InvalidSessionException,
             AccountNotFoundException, InsufficientPrivilegesException {
         if (accountBean == null || !accountBean.isValid()) {
-            throw new InvalidAccountException();
+            throw new IlegalAccountArgumentsException();
         }
 
         if (this.accountRepository.findByLogin(accountBean.getLogin()) != null) {
@@ -65,7 +65,6 @@ public class AccountService {
         }
 
         accountEntity.setUsername(this.generateRandomName());
-        accountEntity.setAvatar(AccountHelper.DEFAULT_IMAGE_ROUTE);
         accountEntity.setCreatedAt(LocalDateTime.now());
         accountEntity.setLastSessionAt(accountEntity.getCreatedAt());
 

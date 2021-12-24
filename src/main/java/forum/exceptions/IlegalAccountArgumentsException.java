@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 
 import forum.helpers.ApiResponse;
 
-public class InvalidAccountException extends ApiException {
-    public InvalidAccountException() {
+public class IlegalAccountArgumentsException extends ApiException {
+    public IlegalAccountArgumentsException() {
         super(new ApiResponse("invalid data", HttpStatus.NOT_ACCEPTABLE));
     }
 }

@@ -19,8 +19,8 @@ import forum.beans.AccountBean;
 import forum.entities.AccountEntity;
 import forum.exceptions.AccountAlreadyExistsException;
 import forum.exceptions.AccountNotFoundException;
+import forum.exceptions.IlegalAccountArgumentsException;
 import forum.exceptions.InsufficientPrivilegesException;
-import forum.exceptions.InvalidAccountException;
 import forum.exceptions.InvalidSessionException;
 import forum.helpers.ApiResponse;
 import forum.services.AccountService;
@@ -65,7 +65,7 @@ public class AccountController {
         try {
             this.accountService.createAccount(accountBean);
             response = new ApiResponse("account has been created", HttpStatus.OK);
-        } catch (InvalidAccountException | AccountAlreadyExistsException | InvalidSessionException
+        } catch (IlegalAccountArgumentsException | AccountAlreadyExistsException | InvalidSessionException
                 | InsufficientPrivilegesException | AccountNotFoundException e) {
             response = e.getApiResponse();
         }
