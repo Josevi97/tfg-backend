@@ -7,13 +7,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import forum.beans.RegisterAccountBean;
+import forum.beans.AccountBean;
 import forum.entities.AccountEntity;
 import forum.exceptions.AccountAlreadyExistsException;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidAccountException;
 import forum.exceptions.InvalidSessionException;
+import forum.helpers.AccountHelper;
 import forum.repositories.AccountRepository;
 
 @Service
@@ -26,7 +27,7 @@ public class AccountService {
     AccountRepository accountRepository;
 
     public Page<AccountEntity> getAllAccounts(Pageable pageable)
-            throws InvalidSessionException, InsufficientPrivilegesException {
+            throws InvalidSessionException, AccountNotFoundException, InsufficientPrivilegesException {
         if (!sessionService.isAdmin()) {
             throw new InsufficientPrivilegesException();
         }
@@ -42,22 +43,29 @@ public class AccountService {
         return this.accountRepository.findById(id).get();
     }
 
-    public void createAccount(RegisterAccountBean registerAccountBean)
-            throws InvalidAccountException, AccountAlreadyExistsException {
-        if (registerAccountBean == null || !registerAccountBean.isValid()) {
+    public void createAccount(AccountBean accountBean)
+            throws InvalidAccountException, AccountAlreadyExistsException, InvalidSessionException,
+            AccountNotFoundException, InsufficientPrivilegesException {
+        if (accountBean == null || !accountBean.isValid()) {
             throw new InvalidAccountException();
         }
 
-        if (this.accountRepository.findByLogin(registerAccountBean.getLogin()) != null) {
+        if (this.accountRepository.findByLogin(accountBean.getLogin()) != null) {
             throw new AccountAlreadyExistsException("login is already in use");
         }
 
-        if (this.accountRepository.findByEmail(registerAccountBean.getEmail()) != null) {
+        if (this.accountRepository.findByEmail(accountBean.getEmail()) != null) {
             throw new AccountAlreadyExistsException("email is already in use");
         }
 
-        AccountEntity accountEntity = registerAccountBean.toEntity();
-        accountEntity.setAdmin(false);
+        AccountEntity accountEntity = accountBean.toEntity();
+
+        if (accountEntity.isAdmin() && !this.sessionService.isAdmin()) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        accountEntity.setUsername(this.generateRandomName());
+        accountEntity.setAvatar(AccountHelper.DEFAULT_IMAGE_ROUTE);
         accountEntity.setCreatedAt(LocalDateTime.now());
         accountEntity.setLastSessionAt(accountEntity.getCreatedAt());
 
@@ -65,28 +73,24 @@ public class AccountService {
     }
 
     public void updateAccount(Long id)
-            throws InvalidSessionException, InsufficientPrivilegesException, AccountNotFoundException {
+            throws InvalidSessionException, AccountNotFoundException, InsufficientPrivilegesException {
         if (!this.sessionService.isAdmin() && !this.sessionService.itsMe(id)) {
             throw new InsufficientPrivilegesException();
-        }
-
-        if (!this.accountRepository.existsById(id)) {
-            throw new AccountNotFoundException();
         }
 
         // Should update account
     }
 
     public void deleteAccount(Long id)
-            throws InvalidSessionException, InsufficientPrivilegesException, AccountNotFoundException {
+            throws InvalidSessionException, AccountNotFoundException, InsufficientPrivilegesException {
         if (!this.sessionService.isAdmin() && !this.sessionService.itsMe(id)) {
             throw new InsufficientPrivilegesException();
         }
 
-        if (!this.accountRepository.existsById(id)) {
-            throw new AccountNotFoundException();
-        }
-
         this.accountRepository.deleteById(id);
+    }
+
+    public String generateRandomName() {
+        return "Jolly_Cucumber";
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import forum.beans.LoginBean;
 import forum.entities.AccountEntity;
+import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.IlegalLoginArgumentsException;
 import forum.exceptions.InvalidSessionException;
 import forum.helpers.ApiResponse;
@@ -30,7 +31,7 @@ public class SessionController {
             return new ResponseEntity<AccountEntity>(
                     sessionService.getUser(),
                     HttpStatus.OK);
-        } catch (InvalidSessionException e) {
+        } catch (InvalidSessionException | AccountNotFoundException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
@@ -44,7 +45,7 @@ public class SessionController {
         try {
             sessionService.connect(loginBean);
             response = new ApiResponse("successful connection", HttpStatus.OK);
-        } catch (IlegalLoginArgumentsException e) {
+        } catch (IlegalLoginArgumentsException | AccountNotFoundException e) {
             response = e.getApiResponse();
         }
 

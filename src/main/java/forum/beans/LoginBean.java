@@ -1,5 +1,7 @@
 package forum.beans;
 
+import forum.helpers.AccountHelper;
+
 public class LoginBean {
     private String login;
     private String password;
@@ -21,7 +23,6 @@ public class LoginBean {
     }
 
     public boolean isValid() {
-        return this.login != null && this.login.length() > 4 &&
-                this.password != null && this.password.length() > 4;
+        return AccountHelper.isLoginValid(this.login) && AccountHelper.isPasswordValid(password);
     }
 }

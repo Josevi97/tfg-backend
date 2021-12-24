@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import forum.beans.RegisterAccountBean;
+import forum.beans.AccountBean;
 import forum.entities.AccountEntity;
 import forum.exceptions.AccountAlreadyExistsException;
 import forum.exceptions.AccountNotFoundException;
@@ -38,7 +38,7 @@ public class AccountController {
             return new ResponseEntity<Page<AccountEntity>>(
                     this.accountService.getAllAccounts(pageable),
                     HttpStatus.OK);
-        } catch (InvalidSessionException | InsufficientPrivilegesException e) {
+        } catch (InvalidSessionException | InsufficientPrivilegesException | AccountNotFoundException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
@@ -59,13 +59,14 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createAccount(@RequestBody RegisterAccountBean registerAccountBean) {
+    public ResponseEntity<?> createAccount(@RequestBody AccountBean accountBean) {
         ApiResponse response;
 
         try {
-            this.accountService.createAccount(registerAccountBean);
+            this.accountService.createAccount(accountBean);
             response = new ApiResponse("account has been created", HttpStatus.OK);
-        } catch (InvalidAccountException | AccountAlreadyExistsException e) {
+        } catch (InvalidAccountException | AccountAlreadyExistsException | InvalidSessionException
+                | InsufficientPrivilegesException | AccountNotFoundException e) {
             response = e.getApiResponse();
         }
 
@@ -73,7 +74,7 @@ public class AccountController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody Object object) {
+    public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountBean accountBean) {
         // Should update account but with its own bean, or maybe change
         // RegisterAccountBean utiliy to adapt it to be
         // well used as an update action or else.

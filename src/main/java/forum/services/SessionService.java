@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service;
 
 import forum.beans.LoginBean;
 import forum.entities.AccountEntity;
+import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.IlegalLoginArgumentsException;
 import forum.exceptions.InvalidSessionException;
 import forum.repositories.AccountRepository;
 
 @Service
 public class SessionService {
-    private static final String USER_ATTR = "USER_ATTR";
+    public static final String USER_ATTR = "USER_ATTR";
 
     @Autowired
     HttpSession http;
@@ -21,18 +22,27 @@ public class SessionService {
     @Autowired
     AccountRepository accountRepository;
 
-    public AccountEntity getUser() throws InvalidSessionException {
+    public AccountEntity getUser() throws InvalidSessionException, AccountNotFoundException {
         if (this.http.getAttribute(USER_ATTR) == null) {
             throw new InvalidSessionException();
+        }
+
+        if (!this.accountRepository.existsById((Long) this.http.getAttribute(USER_ATTR))) {
+            this.http.invalidate();
+            throw new AccountNotFoundException();
         }
 
         return this.accountRepository.findById(
                 (Long) this.http.getAttribute(USER_ATTR)).get();
     }
 
-    public void connect(LoginBean loginBean) throws IlegalLoginArgumentsException {
+    public void connect(LoginBean loginBean) throws IlegalLoginArgumentsException, AccountNotFoundException {
         if (!loginBean.isValid()) {
             throw new IlegalLoginArgumentsException();
+        }
+
+        if (!this.accountRepository.existsByLoginAndPassword(loginBean.getLogin(), loginBean.getPassword())) {
+            throw new AccountNotFoundException();
         }
 
         this.http.setAttribute(
@@ -50,11 +60,11 @@ public class SessionService {
         this.http.invalidate();
     }
 
-    public boolean itsMe(Long id) throws InvalidSessionException {
+    public boolean itsMe(Long id) throws InvalidSessionException, AccountNotFoundException {
         return this.getUser().getId().equals(id);
     }
 
-    public boolean isAdmin() throws InvalidSessionException {
+    public boolean isAdmin() throws InvalidSessionException, AccountNotFoundException {
         return this.getUser().isAdmin();
     }
 }
