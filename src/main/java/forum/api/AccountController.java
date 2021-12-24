@@ -75,9 +75,7 @@ public class AccountController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountBean accountBean) {
-        // Should update account but with its own bean, or maybe change
-        // RegisterAccountBean utiliy to adapt it to be
-        // well used as an update action or else.
+        // Should update account
 
         return null;
     }

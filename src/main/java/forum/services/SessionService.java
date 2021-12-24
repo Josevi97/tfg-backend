@@ -1,5 +1,7 @@
 package forum.services;
 
+import java.time.LocalDateTime;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +48,13 @@ public class SessionService {
             throw new AccountNotFoundException();
         }
 
-        this.http.setAttribute(
-                USER_ATTR,
-                this.accountRepository.findByLoginAndPassword(
-                        loginBean.getLogin(),
-                        loginBean.getPassword()).getId());
+        AccountEntity accountEntity = this.accountRepository.findByLoginAndPassword(
+                loginBean.getLogin(),
+                loginBean.getPassword());
+        accountEntity.setLastSessionAt(LocalDateTime.now());
+
+        this.accountRepository.save(accountEntity);
+        this.http.setAttribute(USER_ATTR, accountEntity.getId());
     }
 
     public void disconnect() throws InvalidSessionException {
