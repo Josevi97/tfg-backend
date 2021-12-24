@@ -75,9 +75,17 @@ public class AccountController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountBean accountBean) {
-        // Should update account
+        ApiResponse response;
 
-        return null;
+        try {
+            this.accountService.updateAccount(id, accountBean);
+            response = new ApiResponse("account has been updated", HttpStatus.OK);
+        } catch (IlegalAccountArgumentsException | InvalidSessionException | AccountNotFoundException
+                | InsufficientPrivilegesException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
     }
 
     @DeleteMapping("/{id}")

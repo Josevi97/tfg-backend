@@ -15,26 +15,6 @@ public class AccountBean {
     public AccountBean() {
     }
 
-    public AccountBean(String login, String email, String originalPassword, String repeatedPassword) {
-        this.login = login;
-        this.email = email;
-        this.originalPassword = originalPassword;
-        this.repeatedPassword = repeatedPassword;
-        this.isAdmin = false;
-    }
-
-    // Falta la imagen
-    public AccountBean(String login, String email, String originalPassword, String repeatedPassword,
-            String username, boolean isAdmin) {
-        this.login = login;
-        this.email = email;
-        this.originalPassword = originalPassword;
-        this.repeatedPassword = repeatedPassword;
-        this.username = username;
-        // Falta la imagen
-        this.isAdmin = isAdmin;
-    }
-
     public void setLogin(String login) {
         this.login = login;
     }
@@ -49,6 +29,10 @@ public class AccountBean {
 
     public void setRepeatedPassword(String repeatedPassword) {
         this.repeatedPassword = repeatedPassword;
+    }
+
+    public void setAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
     public String getLogin() {

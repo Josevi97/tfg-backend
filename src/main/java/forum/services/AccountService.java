@@ -58,12 +58,11 @@ public class AccountService {
             throw new AccountAlreadyExistsException("email is already in use");
         }
 
-        AccountEntity accountEntity = accountBean.toEntity();
-
-        if (accountEntity.isAdmin() && !this.sessionService.isAdmin()) {
+        if (accountBean.isAdmin() && !this.sessionService.isAdmin()) {
             throw new InsufficientPrivilegesException();
         }
 
+        AccountEntity accountEntity = accountBean.toEntity();
         accountEntity.setUsername(this.generateRandomName());
         accountEntity.setCreatedAt(LocalDateTime.now());
         accountEntity.setLastSessionAt(accountEntity.getCreatedAt());
@@ -71,17 +70,43 @@ public class AccountService {
         this.accountRepository.save(accountEntity);
     }
 
-    public void updateAccount(Long id)
-            throws InvalidSessionException, AccountNotFoundException, InsufficientPrivilegesException {
+    public void updateAccount(Long id, AccountBean accountBean)
+            throws IlegalAccountArgumentsException, InvalidSessionException, AccountNotFoundException,
+            InsufficientPrivilegesException {
+        if (accountBean == null || !accountBean.isValid()) {
+            throw new IlegalAccountArgumentsException();
+        }
+
+        if (!this.accountRepository.existsById(id)) {
+            throw new AccountNotFoundException();
+        }
+
         if (!this.sessionService.isAdmin() && !this.sessionService.itsMe(id)) {
             throw new InsufficientPrivilegesException();
         }
 
-        // Should update account
+        if (accountBean.isAdmin() && !this.sessionService.isAdmin()) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        AccountEntity oldAccountEntity = this.accountRepository.findById(id).get();
+        oldAccountEntity.setLogin(accountBean.getLogin());
+        oldAccountEntity.setEmail(accountBean.getEmail());
+        oldAccountEntity.setPassword(accountBean.getPassword());
+        oldAccountEntity
+                .setUsername(
+                        accountBean.getUsername() == null ? this.generateRandomName() : accountBean.getUsername());
+        oldAccountEntity.setAdmin(accountBean.isAdmin());
+
+        this.accountRepository.save(oldAccountEntity);
     }
 
     public void deleteAccount(Long id)
             throws InvalidSessionException, AccountNotFoundException, InsufficientPrivilegesException {
+        if (!this.accountRepository.existsById(id)) {
+            throw new AccountNotFoundException();
+        }
+
         if (!this.sessionService.isAdmin() && !this.sessionService.itsMe(id)) {
             throw new InsufficientPrivilegesException();
         }
