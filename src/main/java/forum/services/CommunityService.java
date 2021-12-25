@@ -63,7 +63,7 @@ public class CommunityService {
 
     public void updateCommunity(Long id, CommunityBean communityBean)
             throws IlegalCommunityArgumentsException, InvalidSessionException, AccountNotFoundException,
-            InsufficientPrivilegesException, CommunityNotFoundException {
+            InsufficientPrivilegesException, CommunityNotFoundException, CommunityAlreadyExistsException {
         if (communityBean == null || !communityBean.isValid()) {
             throw new IlegalCommunityArgumentsException();
         }
@@ -74,6 +74,10 @@ public class CommunityService {
 
         if (!this.communityRepository.existsById(id)) {
             throw new CommunityNotFoundException();
+        }
+
+        if (this.communityRepository.existsByName(communityBean.getName())) {
+            throw new CommunityAlreadyExistsException();
         }
 
         CommunityEntity communityEntity = this.communityRepository.findById(id).get();

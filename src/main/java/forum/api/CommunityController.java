@@ -76,7 +76,7 @@ public class CommunityController {
             this.communityService.updateCommunity(id, communityBean);
             response = new ApiResponse("community has been updated", HttpStatus.OK);
         } catch (IlegalCommunityArgumentsException | InvalidSessionException | AccountNotFoundException
-                | InsufficientPrivilegesException | CommunityNotFoundException e) {
+                | InsufficientPrivilegesException | CommunityNotFoundException | CommunityAlreadyExistsException e) {
             response = e.getApiResponse();
         }
 
