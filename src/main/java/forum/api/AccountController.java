@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import forum.beans.AccountBean;
 import forum.entities.AccountEntity;
+import forum.entities.CommunityListEntity;
 import forum.exceptions.AccountAlreadyExistsException;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.IlegalAccountArgumentsException;
@@ -51,6 +52,19 @@ public class AccountController {
             return new ResponseEntity<AccountEntity>(
                     this.accountService.getAccount(id),
                     HttpStatus.OK);
+        } catch (AccountNotFoundException e) {
+            return new ResponseEntity<ApiResponse>(
+                    e.getApiResponse(),
+                    e.getApiResponse().getStatus());
+        }
+    }
+
+    @GetMapping("/{id}/communities")
+    public ResponseEntity<?> getCommunities(@PathVariable Long id,
+            @PageableDefault(page = 0, size = 5) Pageable pageable) {
+        try {
+            return new ResponseEntity<Page<CommunityListEntity>>(
+                    this.accountService.getCommunitiesByUserId(id, pageable), HttpStatus.OK);
         } catch (AccountNotFoundException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),

@@ -1,17 +1,21 @@
 package forum.entities;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "community")
 public class CommunityEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,6 +34,9 @@ public class CommunityEntity {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "communityListId.communityEntity")
+    private List<CommunityListEntity> communityList = new ArrayList<>();
 
     public CommunityEntity() {
     }
@@ -76,5 +83,9 @@ public class CommunityEntity {
 
     public LocalDateTime getCreatedAt() {
         return this.createdAt;
+    }
+
+    public int getCommunityList() {
+        return this.communityList.size();
     }
 }

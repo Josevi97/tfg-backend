@@ -1,10 +1,13 @@
 package forum.entities;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
@@ -40,6 +43,9 @@ public class AccountEntity {
 
     @Column(name = "last_session_at", nullable = false)
     private LocalDateTime lastSessionAt;
+
+    @OneToMany(mappedBy = "communityListId.userId")
+    private List<CommunityListEntity> communityList = new ArrayList<>();
 
     public AccountEntity() {
     }
@@ -106,5 +112,9 @@ public class AccountEntity {
 
     public LocalDateTime getLastSessionAt() {
         return this.lastSessionAt;
+    }
+
+    public int getCommunityList() {
+        return this.communityList.size();
     }
 }

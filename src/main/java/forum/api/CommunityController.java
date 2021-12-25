@@ -19,6 +19,8 @@ import forum.beans.CommunityBean;
 import forum.entities.CommunityEntity;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.CommunityAlreadyExistsException;
+import forum.exceptions.CommunityAlreadyFollowedException;
+import forum.exceptions.CommunityNotFollowedException;
 import forum.exceptions.CommunityNotFoundException;
 import forum.exceptions.IlegalCommunityArgumentsException;
 import forum.exceptions.InsufficientPrivilegesException;
@@ -92,6 +94,36 @@ public class CommunityController {
             response = new ApiResponse("community has been deleted", HttpStatus.OK);
         } catch (InvalidSessionException | InsufficientPrivilegesException | AccountNotFoundException
                 | CommunityNotFoundException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
+    }
+
+    @PostMapping("/{id}/follow")
+    public ResponseEntity<?> createFollow(@PathVariable Long id) {
+        ApiResponse response;
+
+        try {
+            this.communityService.createFollow(id);
+            response = new ApiResponse("community follow has been created", HttpStatus.OK);
+        } catch (InvalidSessionException | AccountNotFoundException
+                | CommunityNotFoundException | CommunityAlreadyFollowedException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
+    }
+
+    @DeleteMapping("/{id}/follow")
+    public ResponseEntity<?> deleteFollow(@PathVariable Long id) {
+        ApiResponse response;
+
+        try {
+            this.communityService.deleteFollow(id);
+            response = new ApiResponse("community follow has been deleted", HttpStatus.OK);
+        } catch (InvalidSessionException | AccountNotFoundException
+                | CommunityNotFoundException | CommunityNotFollowedException e) {
             response = e.getApiResponse();
         }
 
