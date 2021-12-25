@@ -89,16 +89,16 @@ public class AccountService {
             throw new InsufficientPrivilegesException();
         }
 
-        AccountEntity oldAccountEntity = this.accountRepository.findById(id).get();
-        oldAccountEntity.setLogin(accountBean.getLogin());
-        oldAccountEntity.setEmail(accountBean.getEmail());
-        oldAccountEntity.setPassword(accountBean.getPassword());
-        oldAccountEntity
+        AccountEntity accountEntity = this.accountRepository.findById(id).get();
+        accountEntity.setLogin(accountBean.getLogin());
+        accountEntity.setEmail(accountBean.getEmail());
+        accountEntity.setPassword(accountBean.getPassword());
+        accountEntity
                 .setUsername(
                         accountBean.getUsername() == null ? this.generateRandomName() : accountBean.getUsername());
-        oldAccountEntity.setAdmin(accountBean.isAdmin());
+        accountEntity.setAdmin(accountBean.isAdmin());
 
-        this.accountRepository.save(oldAccountEntity);
+        this.accountRepository.save(accountEntity);
     }
 
     public void deleteAccount(Long id)

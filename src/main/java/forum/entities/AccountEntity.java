@@ -12,6 +12,7 @@ import javax.persistence.Column;
 @Entity
 @Table(name = "account")
 public class AccountEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
