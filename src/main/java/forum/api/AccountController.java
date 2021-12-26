@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import forum.beans.AccountBean;
 import forum.entities.AccountEntity;
+import forum.entities.CommentEntity;
 import forum.entities.CommunityListEntity;
 import forum.entities.EntranceEntity;
 import forum.exceptions.AccountAlreadyExistsException;
@@ -26,6 +27,7 @@ import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
 import forum.helpers.ApiResponse;
 import forum.services.AccountService;
+import forum.services.CommentService;
 import forum.services.CommunityListService;
 import forum.services.EntranceService;
 
@@ -41,6 +43,9 @@ public class AccountController {
 
     @Autowired
     EntranceService entranceService;
+
+    @Autowired
+    CommentService commentService;
 
     @GetMapping
     public ResponseEntity<?> getAccounts(@PageableDefault(page = 0, size = 5) Pageable pageable) {
@@ -87,6 +92,17 @@ public class AccountController {
         try {
             return new ResponseEntity<Page<EntranceEntity>>(
                     this.entranceService.getEntrancesByAccountId(id, pageable), HttpStatus.OK);
+        } catch (AccountNotFoundException e) {
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
+        }
+    }
+
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<?> getCommentsByAccountId(@PathVariable Long id,
+            @PageableDefault(page = 0, size = 5) Pageable pageable) {
+        try {
+            return new ResponseEntity<Page<CommentEntity>>(
+                    this.commentService.getCommentsByAccountId(id, pageable), HttpStatus.OK);
         } catch (AccountNotFoundException e) {
             return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
         }

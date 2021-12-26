@@ -13,11 +13,11 @@ import forum.entities.CommunityEntity;
 public class CommunityListId implements Serializable {
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "account_id", nullable = false)
     private AccountEntity accountEntity;
 
     @ManyToOne
-    @JoinColumn(name = "community_id")
+    @JoinColumn(name = "community_id", nullable = false)
     private CommunityEntity communityEntity;
 
     public CommunityListId() {

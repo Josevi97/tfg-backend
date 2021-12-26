@@ -18,17 +18,14 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
-@Table(name = "entrance")
-public class EntranceEntity {
+@Table(name = "comment")
+public class CommentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", length = 255, nullable = false)
-    private String title;
-
-    @Column(name = "body", length = 255, nullable = false)
+    @Column(name = "body", length = 255, nullable = false, updatable = false)
     private String body;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -40,17 +37,17 @@ public class EntranceEntity {
     private AccountEntity account;
 
     @ManyToOne
-    @JoinColumn(name = "community_id", nullable = false)
-    private CommunityEntity community;
+    @JoinColumn(name = "entrance_id", nullable = false)
+    private EntranceEntity entrance;
 
-    @OneToMany(mappedBy = "entrance", cascade = CascadeType.REMOVE)
-    private List<CommentEntity> comments = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "comment_id", nullable = true)
+    private CommentEntity comment;
 
-    public EntranceEntity() {
-    }
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
+    private List<CommentEntity> responses = new ArrayList<>();
 
-    public void setTitle(String title) {
-        this.title = title;
+    public CommentEntity() {
     }
 
     public void setBody(String body) {
@@ -65,16 +62,16 @@ public class EntranceEntity {
         this.account = account;
     }
 
-    public void setCommunity(CommunityEntity community) {
-        this.community = community;
+    public void setEntrance(EntranceEntity entrance) {
+        this.entrance = entrance;
+    }
+
+    public void setComment(CommentEntity comment) {
+        this.comment = comment;
     }
 
     public Long getId() {
         return this.id;
-    }
-
-    public String getTitle() {
-        return this.title;
     }
 
     public String getBody() {
@@ -89,11 +86,15 @@ public class EntranceEntity {
         return this.account;
     }
 
-    public CommunityEntity getCommunity() {
-        return this.community;
+    public EntranceEntity getEntrance() {
+        return this.entrance;
     }
 
-    public int getComments() {
-        return this.comments.size();
+    public CommentEntity getComment() {
+        return this.comment;
+    }
+
+    public int getResponses() {
+        return this.responses.size();
     }
 }

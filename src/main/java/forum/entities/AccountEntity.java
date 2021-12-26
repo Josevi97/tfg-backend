@@ -56,6 +56,9 @@ public class AccountEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE)
     private List<EntranceEntity> entrances = new ArrayList<>();
 
+    @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE)
+    private List<CommentEntity> comments = new ArrayList<>();
+
     public AccountEntity() {
     }
 
@@ -129,5 +132,9 @@ public class AccountEntity {
 
     public int getEntrances() {
         return this.entrances.size();
+    }
+
+    public int getComments() {
+        return this.comments.size();
     }
 }

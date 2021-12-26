@@ -9,19 +9,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import forum.beans.CommentBean;
 import forum.beans.EntranceBean;
+import forum.entities.CommentEntity;
 import forum.entities.EntranceEntity;
 import forum.exceptions.AccountNotFoundException;
+import forum.exceptions.CommentNotFoundException;
 import forum.exceptions.EntranceNotFoundException;
+import forum.exceptions.IlegalCommentArguments;
 import forum.exceptions.IlegalEntranceArgumentsException;
 import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
 import forum.helpers.ApiResponse;
+import forum.services.CommentService;
 import forum.services.EntranceService;
 
 @RestController
@@ -30,6 +36,9 @@ public class EntranceController {
 
     @Autowired
     EntranceService entranceService;
+
+    @Autowired
+    CommentService commentService;
 
     @GetMapping
     public ResponseEntity<?> getEntrances(@PageableDefault(page = 0, size = 5) Pageable pageable) {
@@ -49,6 +58,32 @@ public class EntranceController {
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
         }
+    }
+
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<?> getCommentsByEntranceId(@PathVariable Long id,
+            @PageableDefault(page = 0, size = 5) Pageable pageable) {
+        try {
+            return new ResponseEntity<Page<CommentEntity>>(
+                    this.commentService.getCommentsByEntranceId(id, pageable), HttpStatus.OK);
+        } catch (EntranceNotFoundException e) {
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
+        }
+    }
+
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<?> createComment(@PathVariable Long id, @RequestBody CommentBean commentBean) {
+        ApiResponse response;
+
+        try {
+            this.commentService.createComment(id, commentBean);
+            response = new ApiResponse("comment has been created", HttpStatus.OK);
+        } catch (IlegalCommentArguments | EntranceNotFoundException | CommentNotFoundException
+                | InvalidSessionException | AccountNotFoundException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
     }
 
     @PutMapping("/{id}")
