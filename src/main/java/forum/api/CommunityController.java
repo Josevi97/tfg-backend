@@ -16,18 +16,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import forum.beans.CommunityBean;
+import forum.beans.EntranceBean;
 import forum.entities.CommunityEntity;
+import forum.entities.EntranceEntity;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.CommunityAlreadyExistsException;
 import forum.exceptions.CommunityAlreadyFollowedException;
 import forum.exceptions.CommunityNotFollowedException;
 import forum.exceptions.CommunityNotFoundException;
 import forum.exceptions.IlegalCommunityArgumentsException;
+import forum.exceptions.IlegalEntranceArgumentsException;
 import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
 import forum.helpers.ApiResponse;
 import forum.services.CommunityListService;
 import forum.services.CommunityService;
+import forum.services.EntranceService;
 
 @RestController
 @RequestMapping("/communities")
@@ -38,6 +42,9 @@ public class CommunityController {
 
     @Autowired
     CommunityListService communityListService;
+
+    @Autowired
+    EntranceService entranceService;
 
     @GetMapping
     public ResponseEntity<?> getCommunities(@PageableDefault(page = 0, size = 5) Pageable pageable) {
@@ -59,6 +66,17 @@ public class CommunityController {
         }
     }
 
+    @GetMapping("/{id}/entrances")
+    public ResponseEntity<?> getEntrancesByCommunityId(@PathVariable Long id,
+            @PageableDefault(page = 0, size = 5) Pageable pageable) {
+        try {
+            return new ResponseEntity<Page<EntranceEntity>>(
+                    this.entranceService.getEntrancesByCommunityId(id, pageable), HttpStatus.OK);
+        } catch (CommunityNotFoundException e) {
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
+        }
+    }
+
     @PostMapping
     public ResponseEntity<?> createCommunity(@RequestBody CommunityBean communityBean) {
         ApiResponse response;
@@ -68,6 +86,36 @@ public class CommunityController {
             response = new ApiResponse("community has been created", HttpStatus.OK);
         } catch (IlegalCommunityArgumentsException | InvalidSessionException | AccountNotFoundException
                 | InsufficientPrivilegesException | CommunityAlreadyExistsException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
+    }
+
+    @PostMapping("/{id}/follow")
+    public ResponseEntity<?> createFollow(@PathVariable Long id) {
+        ApiResponse response;
+
+        try {
+            this.communityListService.createFollow(id);
+            response = new ApiResponse("community follow has been created", HttpStatus.OK);
+        } catch (InvalidSessionException | AccountNotFoundException
+                | CommunityNotFoundException | CommunityAlreadyFollowedException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
+    }
+
+    @PostMapping("/{id}/entrances")
+    public ResponseEntity<?> createEntrance(@PathVariable Long id, @RequestBody EntranceBean entranceBean) {
+        ApiResponse response;
+
+        try {
+            this.entranceService.createEntrance(id, entranceBean);
+            response = new ApiResponse("entrance has been created", HttpStatus.OK);
+        } catch (IlegalEntranceArgumentsException | InvalidSessionException | AccountNotFoundException
+                | CommunityNotFoundException e) {
             response = e.getApiResponse();
         }
 
@@ -98,21 +146,6 @@ public class CommunityController {
             response = new ApiResponse("community has been deleted", HttpStatus.OK);
         } catch (InvalidSessionException | InsufficientPrivilegesException | AccountNotFoundException
                 | CommunityNotFoundException e) {
-            response = e.getApiResponse();
-        }
-
-        return new ResponseEntity<ApiResponse>(response, response.getStatus());
-    }
-
-    @PostMapping("/{id}/follow")
-    public ResponseEntity<?> createFollow(@PathVariable Long id) {
-        ApiResponse response;
-
-        try {
-            this.communityListService.createFollow(id);
-            response = new ApiResponse("community follow has been created", HttpStatus.OK);
-        } catch (InvalidSessionException | AccountNotFoundException
-                | CommunityNotFoundException | CommunityAlreadyFollowedException e) {
             response = e.getApiResponse();
         }
 

@@ -27,7 +27,7 @@ public class EntranceBean {
     }
 
     public boolean isValid() {
-        return EntranceHelper.isTitleValid(this.body) && EntranceHelper.isBodyValid(this.body);
+        return EntranceHelper.isTitleValid(this.title) && EntranceHelper.isBodyValid(this.body);
     }
 
     public EntranceEntity toEntity() {

@@ -33,11 +33,11 @@ public class EntranceEntity {
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
-    AccountEntity accountEntity;
+    AccountEntity account;
 
     @ManyToOne
     @JoinColumn(name = "community_id", nullable = false)
-    CommunityEntity communityEntity;
+    CommunityEntity community;
 
     public EntranceEntity() {
     }
@@ -54,12 +54,12 @@ public class EntranceEntity {
         this.createdAt = createdAt;
     }
 
-    public void setAccount(AccountEntity accountEntity) {
-        this.accountEntity = accountEntity;
+    public void setAccount(AccountEntity account) {
+        this.account = account;
     }
 
-    public void setCommunity(CommunityEntity communityEntity) {
-        this.communityEntity = communityEntity;
+    public void setCommunity(CommunityEntity community) {
+        this.community = community;
     }
 
     public Long getId() {
@@ -79,10 +79,10 @@ public class EntranceEntity {
     }
 
     public AccountEntity getAccount() {
-        return this.accountEntity;
+        return this.account;
     }
 
     public CommunityEntity getCommunity() {
-        return this.communityEntity;
+        return this.community;
     }
 }

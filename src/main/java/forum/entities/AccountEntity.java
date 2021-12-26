@@ -53,7 +53,7 @@ public class AccountEntity {
     @OneToMany(mappedBy = "communityListId.accountEntity", cascade = CascadeType.REMOVE)
     private List<CommunityListEntity> communityList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "accountEntity", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE)
     private List<EntranceEntity> entrances = new ArrayList<>();
 
     public AccountEntity() {
