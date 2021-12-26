@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name = "community")
 public class CommunityEntity {
@@ -33,11 +35,15 @@ public class CommunityEntity {
     @Column(name = "image", length = 255, nullable = false)
     private String image;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "communityListId.communityEntity", cascade = CascadeType.REMOVE)
     private List<CommunityListEntity> communityList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "communityEntity", cascade = CascadeType.REMOVE)
+    private List<EntranceEntity> entrances = new ArrayList<>();
 
     public CommunityEntity() {
     }
@@ -88,5 +94,9 @@ public class CommunityEntity {
 
     public int getCommunityList() {
         return this.communityList.size();
+    }
+
+    public int getEntrances() {
+        return this.entrances.size();
     }
 }

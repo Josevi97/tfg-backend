@@ -1,7 +1,5 @@
 package forum.helpers;
 
-import forum.entities.AccountEntity;
-
 public class AccountHelper {
     public static final String IMAGES_ROUTE = "/assets/accounts/images";
     public static final String DEFAULT_IMAGE_ROUTE = IMAGES_ROUTE + "/default_000.png";
@@ -21,16 +19,12 @@ public class AccountHelper {
         return password != null && password.length() > MIN_PASSWORD_SIZE;
     }
 
+    public static boolean isUsernameValid(String username) {
+        return username != null && username.length() > MIN_USERNAME_SIZE;
+    }
+
     public static boolean isPasswordValid(String originalPassword, String repeatedPassword) {
         return originalPassword.equals(repeatedPassword) && originalPassword != null
                 && originalPassword.length() > MIN_PASSWORD_SIZE;
-    }
-
-    public static AccountEntity getFixedAccountEntity(AccountEntity accountEntity) {
-        if (accountEntity.getAvatar() == null) {
-            accountEntity.setAvatar(DEFAULT_IMAGE_ROUTE);
-        }
-
-        return accountEntity;
     }
 }

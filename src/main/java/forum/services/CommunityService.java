@@ -76,7 +76,8 @@ public class CommunityService {
             throw new CommunityNotFoundException();
         }
 
-        if (this.communityRepository.existsByName(communityBean.getName())) {
+        if (this.communityRepository.existsByName(communityBean.getName())
+                && this.communityRepository.findByName(communityBean.getName()).getId() != id) {
             throw new CommunityAlreadyExistsException();
         }
 

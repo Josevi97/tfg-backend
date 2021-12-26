@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.GeneratedValue;
@@ -30,7 +33,7 @@ public class AccountEntity {
     @Column(name = "password", length = 255, nullable = false)
     private String password;
 
-    @Column(name = "username", length = 255, nullable = true)
+    @Column(name = "username", length = 255, nullable = false)
     private String username;
 
     @Column(name = "avatar", length = 255, nullable = true)
@@ -40,13 +43,18 @@ public class AccountEntity {
     private Boolean isAdmin;
 
     @Column(name = "created_at", nullable = false, updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
 
     @Column(name = "last_session_at", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime lastSessionAt;
 
     @OneToMany(mappedBy = "communityListId.accountEntity", cascade = CascadeType.REMOVE)
     private List<CommunityListEntity> communityList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "accountEntity", cascade = CascadeType.REMOVE)
+    private List<EntranceEntity> entrances = new ArrayList<>();
 
     public AccountEntity() {
     }
@@ -117,5 +125,9 @@ public class AccountEntity {
 
     public int getCommunityList() {
         return this.communityList.size();
+    }
+
+    public int getEntrances() {
+        return this.entrances.size();
     }
 }

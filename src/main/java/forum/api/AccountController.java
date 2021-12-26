@@ -99,7 +99,7 @@ public class AccountController {
             this.accountService.updateAccount(id, accountBean);
             response = new ApiResponse("account has been updated", HttpStatus.OK);
         } catch (IlegalAccountArgumentsException | InvalidSessionException | AccountNotFoundException
-                | InsufficientPrivilegesException e) {
+                | AccountAlreadyExistsException | InsufficientPrivilegesException e) {
             response = e.getApiResponse();
         }
 

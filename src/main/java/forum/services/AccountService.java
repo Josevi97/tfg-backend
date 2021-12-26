@@ -40,7 +40,7 @@ public class AccountService {
             throw new AccountNotFoundException();
         }
 
-        return AccountHelper.getFixedAccountEntity(this.accountRepository.findById(id).get());
+        return this.accountRepository.findById(id).get();
     }
 
     public void createAccount(AccountBean accountBean)
@@ -50,11 +50,11 @@ public class AccountService {
             throw new IlegalAccountArgumentsException();
         }
 
-        if (this.accountRepository.findByLogin(accountBean.getLogin()) != null) {
+        if (this.accountRepository.existsByLogin(accountBean.getLogin())) {
             throw new AccountAlreadyExistsException("login is already in use");
         }
 
-        if (this.accountRepository.findByEmail(accountBean.getEmail()) != null) {
+        if (this.accountRepository.existsByEmail(accountBean.getEmail())) {
             throw new AccountAlreadyExistsException("email is already in use");
         }
 
@@ -63,7 +63,9 @@ public class AccountService {
         }
 
         AccountEntity accountEntity = accountBean.toEntity();
-        accountEntity.setUsername(this.generateRandomName());
+        accountEntity.setUsername(!AccountHelper.isUsernameValid(accountBean.getUsername()) ? this.generateRandomName()
+                : accountBean.getUsername());
+        accountEntity.setAvatar(AccountHelper.DEFAULT_IMAGE_ROUTE);
         accountEntity.setCreatedAt(LocalDateTime.now());
         accountEntity.setLastSessionAt(accountEntity.getCreatedAt());
 
@@ -72,6 +74,7 @@ public class AccountService {
 
     public void updateAccount(Long id, AccountBean accountBean)
             throws IlegalAccountArgumentsException, InvalidSessionException, AccountNotFoundException,
+            AccountAlreadyExistsException,
             InsufficientPrivilegesException {
         if (accountBean == null || !accountBean.isValid()) {
             throw new IlegalAccountArgumentsException();
@@ -79,6 +82,16 @@ public class AccountService {
 
         if (!this.accountRepository.existsById(id)) {
             throw new AccountNotFoundException();
+        }
+
+        if (this.accountRepository.existsByLogin(accountBean.getLogin()) &&
+                this.accountRepository.findByLogin(accountBean.getLogin()).getId() != id) {
+            throw new AccountAlreadyExistsException("login is already in use");
+        }
+
+        if (this.accountRepository.existsByEmail(accountBean.getEmail()) &&
+                this.accountRepository.findByEmail(accountBean.getEmail()).getId() != id) {
+            throw new AccountAlreadyExistsException("email is already in use");
         }
 
         if (!this.sessionService.isAdmin() && !this.sessionService.itsMe(id)) {
@@ -93,9 +106,9 @@ public class AccountService {
         accountEntity.setLogin(accountBean.getLogin());
         accountEntity.setEmail(accountBean.getEmail());
         accountEntity.setPassword(accountBean.getPassword());
-        accountEntity
-                .setUsername(
-                        accountBean.getUsername() == null ? this.generateRandomName() : accountBean.getUsername());
+        accountEntity.setUsername(!AccountHelper.isUsernameValid(accountBean.getUsername()) ? this.generateRandomName()
+                : accountBean.getUsername());
+        accountEntity.setAvatar(AccountHelper.DEFAULT_IMAGE_ROUTE);
         accountEntity.setAdmin(accountBean.isAdmin());
 
         this.accountRepository.save(accountEntity);

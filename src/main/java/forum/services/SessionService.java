@@ -12,7 +12,6 @@ import forum.entities.AccountEntity;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.IlegalLoginArgumentsException;
 import forum.exceptions.InvalidSessionException;
-import forum.helpers.AccountHelper;
 import forum.repositories.AccountRepository;
 
 @Service
@@ -35,8 +34,7 @@ public class SessionService {
             throw new AccountNotFoundException();
         }
 
-        return AccountHelper
-                .getFixedAccountEntity(this.accountRepository.findById((Long) this.http.getAttribute(USER_ATTR)).get());
+        return this.accountRepository.findById((Long) this.http.getAttribute(USER_ATTR)).get();
     }
 
     public void connect(LoginBean loginBean) throws IlegalLoginArgumentsException, AccountNotFoundException {
