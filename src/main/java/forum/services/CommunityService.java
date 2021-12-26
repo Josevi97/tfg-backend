@@ -30,6 +30,10 @@ public class CommunityService {
         return this.communityRepository.findAll(pageable);
     }
 
+    public Page<CommunityEntity> getCommunitiesLikeName(String title, Pageable pageable) {
+        return this.communityRepository.findByNameContaining(title, pageable);
+    }
+
     public CommunityEntity getCommunity(Long id) throws CommunityNotFoundException {
         if (!this.communityRepository.existsById(id)) {
             throw new CommunityNotFoundException();
