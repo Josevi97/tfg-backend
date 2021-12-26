@@ -71,9 +71,12 @@ public class CommunityController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<EntranceEntity>>(
-                    this.entranceService.getEntrancesByCommunityId(id, pageable), HttpStatus.OK);
+                    this.entranceService.getEntrancesByCommunityId(id, pageable),
+                    HttpStatus.OK);
         } catch (CommunityNotFoundException e) {
-            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(
+                    e.getApiResponse(),
+                    e.getApiResponse().getStatus());
         }
     }
 

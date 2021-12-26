@@ -32,9 +32,12 @@ public class CommentController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<CommentEntity>>(
-                    this.commentService.getCommentsByCommentId(id, pageable), HttpStatus.OK);
+                    this.commentService.getCommentsByCommentId(id, pageable),
+                    HttpStatus.OK);
         } catch (CommentNotFoundException e) {
-            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(
+                    e.getApiResponse(),
+                    e.getApiResponse().getStatus());
         }
     }
 

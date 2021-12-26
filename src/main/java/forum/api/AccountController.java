@@ -91,9 +91,12 @@ public class AccountController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<EntranceEntity>>(
-                    this.entranceService.getEntrancesByAccountId(id, pageable), HttpStatus.OK);
+                    this.entranceService.getEntrancesByAccountId(id, pageable),
+                    HttpStatus.OK);
         } catch (AccountNotFoundException e) {
-            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(
+                    e.getApiResponse(),
+                    e.getApiResponse().getStatus());
         }
     }
 
@@ -102,9 +105,12 @@ public class AccountController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<CommentEntity>>(
-                    this.commentService.getCommentsByAccountId(id, pageable), HttpStatus.OK);
+                    this.commentService.getCommentsByAccountId(id, pageable),
+                    HttpStatus.OK);
         } catch (AccountNotFoundException e) {
-            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(
+                    e.getApiResponse(),
+                    e.getApiResponse().getStatus());
         }
     }
 

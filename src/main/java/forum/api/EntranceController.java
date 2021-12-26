@@ -65,9 +65,12 @@ public class EntranceController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<CommentEntity>>(
-                    this.commentService.getCommentsByEntranceId(id, pageable), HttpStatus.OK);
+                    this.commentService.getCommentsByEntranceId(id, pageable),
+                    HttpStatus.OK);
         } catch (EntranceNotFoundException e) {
-            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(
+                    e.getApiResponse(),
+                    e.getApiResponse().getStatus());
         }
     }
 
