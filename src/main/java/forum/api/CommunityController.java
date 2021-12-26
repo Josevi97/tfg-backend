@@ -26,6 +26,7 @@ import forum.exceptions.IlegalCommunityArgumentsException;
 import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
 import forum.helpers.ApiResponse;
+import forum.services.CommunityListService;
 import forum.services.CommunityService;
 
 @RestController
@@ -34,6 +35,9 @@ public class CommunityController {
 
     @Autowired
     CommunityService communityService;
+
+    @Autowired
+    CommunityListService communityListService;
 
     @GetMapping
     public ResponseEntity<?> getCommunities(@PageableDefault(page = 0, size = 5) Pageable pageable) {
@@ -105,7 +109,7 @@ public class CommunityController {
         ApiResponse response;
 
         try {
-            this.communityService.createFollow(id);
+            this.communityListService.createFollow(id);
             response = new ApiResponse("community follow has been created", HttpStatus.OK);
         } catch (InvalidSessionException | AccountNotFoundException
                 | CommunityNotFoundException | CommunityAlreadyFollowedException e) {
@@ -120,7 +124,7 @@ public class CommunityController {
         ApiResponse response;
 
         try {
-            this.communityService.deleteFollow(id);
+            this.communityListService.deleteFollow(id);
             response = new ApiResponse("community follow has been deleted", HttpStatus.OK);
         } catch (InvalidSessionException | AccountNotFoundException
                 | CommunityNotFoundException | CommunityNotFollowedException e) {

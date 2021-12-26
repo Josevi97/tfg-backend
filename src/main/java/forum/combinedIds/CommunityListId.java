@@ -2,33 +2,34 @@ package forum.combinedIds;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import forum.entities.AccountEntity;
 import forum.entities.CommunityEntity;
 
 @Embeddable
 public class CommunityListId implements Serializable {
 
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private AccountEntity accountEntity;
 
     @ManyToOne
     @JoinColumn(name = "community_id")
-    CommunityEntity communityEntity;
+    private CommunityEntity communityEntity;
 
     public CommunityListId() {
     }
 
-    public CommunityListId(Long userId, CommunityEntity communityEntity) {
-        this.userId = userId;
+    public CommunityListId(AccountEntity accountEntity, CommunityEntity communityEntity) {
+        this.accountEntity = accountEntity;
         this.communityEntity = communityEntity;
     }
 
-    public Long getUserId() {
-        return this.userId;
+    public AccountEntity getAccountEntity() {
+        return this.accountEntity;
     }
 
     public CommunityEntity getCommunityEntity() {

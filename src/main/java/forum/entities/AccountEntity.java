@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 
 @Entity
@@ -44,7 +45,7 @@ public class AccountEntity {
     @Column(name = "last_session_at", nullable = false)
     private LocalDateTime lastSessionAt;
 
-    @OneToMany(mappedBy = "communityListId.userId")
+    @OneToMany(mappedBy = "communityListId.accountEntity", cascade = CascadeType.REMOVE)
     private List<CommunityListEntity> communityList = new ArrayList<>();
 
     public AccountEntity() {

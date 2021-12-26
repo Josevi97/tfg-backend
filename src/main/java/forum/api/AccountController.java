@@ -25,6 +25,7 @@ import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
 import forum.helpers.ApiResponse;
 import forum.services.AccountService;
+import forum.services.CommunityListService;
 
 @RestController
 @RequestMapping("/accounts")
@@ -32,6 +33,9 @@ public class AccountController {
 
     @Autowired
     AccountService accountService;
+
+    @Autowired
+    CommunityListService communityListService;
 
     @GetMapping
     public ResponseEntity<?> getAccounts(@PageableDefault(page = 0, size = 5) Pageable pageable) {
@@ -64,7 +68,7 @@ public class AccountController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<CommunityListEntity>>(
-                    this.accountService.getCommunitiesByUserId(id, pageable), HttpStatus.OK);
+                    this.communityListService.getCommunitiesByUserId(id, pageable), HttpStatus.OK);
         } catch (AccountNotFoundException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),

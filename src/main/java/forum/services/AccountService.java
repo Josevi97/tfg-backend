@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import forum.beans.AccountBean;
 import forum.entities.AccountEntity;
-import forum.entities.CommunityEntity;
-import forum.entities.CommunityListEntity;
 import forum.exceptions.AccountAlreadyExistsException;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.IlegalAccountArgumentsException;
@@ -18,7 +16,6 @@ import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
 import forum.helpers.AccountHelper;
 import forum.repositories.AccountRepository;
-import forum.repositories.CommunityListRepository;
 
 @Service
 public class AccountService {
@@ -28,9 +25,6 @@ public class AccountService {
 
     @Autowired
     AccountRepository accountRepository;
-
-    @Autowired
-    CommunityListRepository communityListRepository;
 
     public Page<AccountEntity> getAllAccounts(Pageable pageable)
             throws InvalidSessionException, AccountNotFoundException, InsufficientPrivilegesException {
@@ -47,16 +41,6 @@ public class AccountService {
         }
 
         return AccountHelper.getFixedAccountEntity(this.accountRepository.findById(id).get());
-    }
-
-    public Page<CommunityListEntity> getCommunitiesByUserId(Long id, Pageable pageable)
-            throws AccountNotFoundException {
-
-        if (!this.accountRepository.existsById(id)) {
-            throw new AccountNotFoundException();
-        }
-
-        return this.communityListRepository.findByCommunityListIdUserId(id, pageable);
     }
 
     public void createAccount(AccountBean accountBean)

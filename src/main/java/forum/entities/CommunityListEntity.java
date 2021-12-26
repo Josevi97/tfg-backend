@@ -20,6 +20,10 @@ public class CommunityListEntity {
         this.communityListId = communityListId;
     }
 
+    public AccountEntity getAccount() {
+        return this.communityListId.getAccountEntity();
+    }
+
     public CommunityEntity getCommunity() {
         return this.communityListId.getCommunityEntity();
     }

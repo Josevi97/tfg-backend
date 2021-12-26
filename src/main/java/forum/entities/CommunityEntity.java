@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,7 +36,7 @@ public class CommunityEntity {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "communityListId.communityEntity")
+    @OneToMany(mappedBy = "communityListId.communityEntity", cascade = CascadeType.REMOVE)
     private List<CommunityListEntity> communityList = new ArrayList<>();
 
     public CommunityEntity() {
