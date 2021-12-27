@@ -47,6 +47,9 @@ public class CommentEntity {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
     private List<CommentEntity> responses = new ArrayList<>();
 
+    @OneToMany(mappedBy = "commentVoteId.comment", cascade = CascadeType.REMOVE)
+    private List<CommentVoteEntity> votes = new ArrayList<>();
+
     public CommentEntity() {
     }
 
@@ -96,5 +99,9 @@ public class CommentEntity {
 
     public int getResponses() {
         return this.responses.size();
+    }
+
+    public int getVotes() {
+        return this.votes.size();
     }
 }

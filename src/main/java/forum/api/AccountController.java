@@ -17,15 +17,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import forum.beans.AccountBean;
 import forum.entities.AccountEntity;
+import forum.entities.AccountFollowEntity;
 import forum.entities.CommentEntity;
 import forum.entities.CommunityListEntity;
 import forum.entities.EntranceEntity;
 import forum.exceptions.AccountAlreadyExistsException;
+import forum.exceptions.AccountFollowAlreadyExistsException;
+import forum.exceptions.AccountFollowNotFoundException;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.IlegalAccountArgumentsException;
 import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
+import forum.exceptions.SelfAccountFollowAttemptException;
 import forum.helpers.ApiResponse;
+import forum.services.AccountFollowService;
 import forum.services.AccountService;
 import forum.services.CommentService;
 import forum.services.CommunityListService;
@@ -46,6 +51,9 @@ public class AccountController {
 
     @Autowired
     CommentService commentService;
+
+    @Autowired
+    AccountFollowService accountFollowService;
 
     @GetMapping
     public ResponseEntity<?> getAccounts(@PageableDefault(page = 0, size = 5) Pageable pageable) {
@@ -114,6 +122,34 @@ public class AccountController {
         }
     }
 
+    @GetMapping("/{id}/following")
+    public ResponseEntity<?> getFollowingByAccountId(@PathVariable Long id,
+            @PageableDefault(page = 0, size = 5) Pageable pageable) {
+        try {
+            return new ResponseEntity<Page<AccountFollowEntity>>(
+                    this.accountFollowService.getFollowingByAccountId(id, pageable),
+                    HttpStatus.OK);
+        } catch (AccountNotFoundException e) {
+            return new ResponseEntity<ApiResponse>(
+                    e.getApiResponse(),
+                    e.getApiResponse().getStatus());
+        }
+    }
+
+    @GetMapping("/{id}/followers")
+    public ResponseEntity<?> getFollowersByAccountId(@PathVariable Long id,
+            @PageableDefault(page = 0, size = 5) Pageable pageable) {
+        try {
+            return new ResponseEntity<Page<AccountFollowEntity>>(
+                    this.accountFollowService.getFollowersByAccountId(id, pageable),
+                    HttpStatus.OK);
+        } catch (AccountNotFoundException e) {
+            return new ResponseEntity<ApiResponse>(
+                    e.getApiResponse(),
+                    e.getApiResponse().getStatus());
+        }
+    }
+
     @PostMapping
     public ResponseEntity<?> createAccount(@RequestBody AccountBean accountBean) {
         ApiResponse response;
@@ -123,6 +159,35 @@ public class AccountController {
             response = new ApiResponse("account has been created", HttpStatus.OK);
         } catch (IlegalAccountArgumentsException | AccountAlreadyExistsException | InvalidSessionException
                 | InsufficientPrivilegesException | AccountNotFoundException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
+    }
+
+    @PostMapping("/{id}/follow")
+    public ResponseEntity<?> createAccountFollow(@PathVariable Long id) {
+        ApiResponse response;
+
+        try {
+            this.accountFollowService.createFollow(id);
+            response = new ApiResponse("follow has been created", HttpStatus.OK);
+        } catch (AccountNotFoundException | InvalidSessionException | SelfAccountFollowAttemptException
+                | AccountFollowAlreadyExistsException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
+    }
+
+    @DeleteMapping("/{id}/follow")
+    public ResponseEntity<?> deleteAccountFollow(@PathVariable Long id) {
+        ApiResponse response;
+
+        try {
+            this.accountFollowService.deleteFollow(id);
+            response = new ApiResponse("follow has been deleted", HttpStatus.OK);
+        } catch (AccountNotFoundException | InvalidSessionException | AccountFollowNotFoundException e) {
             response = e.getApiResponse();
         }
 

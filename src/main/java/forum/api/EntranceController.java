@@ -17,11 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import forum.beans.CommentBean;
 import forum.beans.EntranceBean;
+import forum.beans.VoteBean;
 import forum.entities.CommentEntity;
 import forum.entities.EntranceEntity;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.CommentNotFoundException;
 import forum.exceptions.EntranceNotFoundException;
+import forum.exceptions.EntranceVoteAlreadyExistsException;
+import forum.exceptions.EntranceVoteNotFoundException;
 import forum.exceptions.IlegalCommentArguments;
 import forum.exceptions.IlegalEntranceArgumentsException;
 import forum.exceptions.InsufficientPrivilegesException;
@@ -29,6 +32,7 @@ import forum.exceptions.InvalidSessionException;
 import forum.helpers.ApiResponse;
 import forum.services.CommentService;
 import forum.services.EntranceService;
+import forum.services.EntranceVoteService;
 
 @RestController
 @RequestMapping("/entrances")
@@ -39,6 +43,9 @@ public class EntranceController {
 
     @Autowired
     CommentService commentService;
+
+    @Autowired
+    EntranceVoteService entranceVoteService;
 
     @GetMapping
     public ResponseEntity<?> getEntrances(@PageableDefault(page = 0, size = 5) Pageable pageable) {
@@ -89,6 +96,21 @@ public class EntranceController {
         return new ResponseEntity<ApiResponse>(response, response.getStatus());
     }
 
+    @PostMapping("/{id}/vote")
+    public ResponseEntity<?> createVote(@PathVariable Long id, @RequestBody VoteBean voteBean) {
+        ApiResponse response;
+
+        try {
+            this.entranceVoteService.createVote(id, voteBean.getVote());
+            response = new ApiResponse("entrance vote has been created", HttpStatus.OK);
+        } catch (EntranceNotFoundException | InvalidSessionException | AccountNotFoundException
+                | EntranceVoteAlreadyExistsException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateEntrance(@PathVariable Long id, @RequestBody EntranceBean entranceBean) {
         ApiResponse response;
@@ -114,6 +136,21 @@ public class EntranceController {
             response = new ApiResponse("entrance has been deleted", HttpStatus.OK);
         } catch (EntranceNotFoundException | InvalidSessionException | AccountNotFoundException
                 | InsufficientPrivilegesException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
+    }
+
+    @DeleteMapping("/{id}/vote")
+    public ResponseEntity<?> deleteVote(@PathVariable Long id) {
+        ApiResponse response;
+
+        try {
+            this.entranceVoteService.deleteVote(id);
+            response = new ApiResponse("entrance vote has been deleted", HttpStatus.OK);
+        } catch (EntranceNotFoundException | InvalidSessionException | AccountNotFoundException
+                | EntranceVoteNotFoundException e) {
             response = e.getApiResponse();
         }
 

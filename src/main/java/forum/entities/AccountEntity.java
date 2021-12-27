@@ -59,6 +59,18 @@ public class AccountEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE)
     private List<CommentEntity> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "accountFollowId.from", cascade = CascadeType.REMOVE)
+    private List<AccountFollowEntity> following = new ArrayList<>();
+
+    @OneToMany(mappedBy = "accountFollowId.to", cascade = CascadeType.REMOVE)
+    private List<AccountFollowEntity> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "entranceVoteId.account", cascade = CascadeType.REMOVE)
+    private List<EntranceVoteEntity> entranceVotes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "commentVoteId.account", cascade = CascadeType.REMOVE)
+    private List<CommentVoteEntity> commentVotes = new ArrayList<>();
+
     public AccountEntity() {
     }
 
@@ -136,5 +148,21 @@ public class AccountEntity {
 
     public int getComments() {
         return this.comments.size();
+    }
+
+    public int getFollowing() {
+        return this.following.size();
+    }
+
+    public int getFollowers() {
+        return this.followers.size();
+    }
+
+    public int getEntranceVotes() {
+        return this.entranceVotes.size();
+    }
+
+    public int getCommentVotes() {
+        return this.commentVotes.size();
     }
 }

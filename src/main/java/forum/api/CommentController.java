@@ -9,16 +9,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import forum.beans.VoteBean;
 import forum.entities.CommentEntity;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.CommentNotFoundException;
+import forum.exceptions.CommentVoteAlreadyExistsException;
+import forum.exceptions.CommentVoteNotFoundException;
 import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
 import forum.helpers.ApiResponse;
 import forum.services.CommentService;
+import forum.services.CommentVoteService;
 
 @RestController
 @RequestMapping("/comments")
@@ -26,6 +32,9 @@ public class CommentController {
 
     @Autowired
     CommentService commentService;
+
+    @Autowired
+    CommentVoteService commentVoteService;
 
     @GetMapping("/{id}/responses")
     public ResponseEntity<?> getCommentsByCommentId(@PathVariable Long id,
@@ -54,6 +63,21 @@ public class CommentController {
         }
     }
 
+    @PostMapping("/{id}/vote")
+    public ResponseEntity<?> createVote(@PathVariable Long id, @RequestBody VoteBean voteBean) {
+        ApiResponse response;
+
+        try {
+            this.commentVoteService.createVote(id, voteBean.getVote());
+            response = new ApiResponse("comment vote has been created", HttpStatus.OK);
+        } catch (CommentNotFoundException | InvalidSessionException | AccountNotFoundException
+                | CommentVoteAlreadyExistsException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteComment(@PathVariable Long id) {
         ApiResponse response;
@@ -63,6 +87,21 @@ public class CommentController {
             response = new ApiResponse("comment has been deleted", HttpStatus.OK);
         } catch (CommentNotFoundException | InvalidSessionException | AccountNotFoundException
                 | InsufficientPrivilegesException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
+    }
+
+    @DeleteMapping("/{id}/vote")
+    public ResponseEntity<?> deleteVote(@PathVariable Long id) {
+        ApiResponse response;
+
+        try {
+            this.commentVoteService.deleteVote(id);
+            response = new ApiResponse("comment vote has been deleted", HttpStatus.OK);
+        } catch (CommentNotFoundException | InvalidSessionException | AccountNotFoundException
+                | CommentVoteNotFoundException e) {
             response = e.getApiResponse();
         }
 
