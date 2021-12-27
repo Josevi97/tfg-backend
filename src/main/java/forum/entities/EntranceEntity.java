@@ -103,4 +103,9 @@ public class EntranceEntity {
     public int getVotes() {
         return this.votes.size();
     }
+
+    public Long getCalculatedVotes() {
+        Long plus = this.votes.stream().filter(vote -> vote.getVote()).count();
+        return plus - (this.votes.size() - plus);
+    }
 }
