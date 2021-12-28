@@ -1,14 +1,10 @@
 package forum.helpers;
 
-public class AccountHelper {
-    public static final String IMAGES_ROUTE = "/assets/accounts/images";
-    public static final String DEFAULT_IMAGE_ROUTE = IMAGES_ROUTE + "/default_000.png";
-    public static final int MIN_LOGIN_SIZE = 4;
-    public static final int MIN_USERNAME_SIZE = 4;
-    public static final int MIN_PASSWORD_SIZE = 4;
+import forum.constants.AccountConstants;
 
+public class AccountHelper {
     public static boolean isLoginValid(String login) {
-        return login != null && login.length() > MIN_LOGIN_SIZE;
+        return login != null && login.length() > AccountConstants.MIN_LOGIN_SIZE;
     }
 
     public static boolean isEmailValid(String email) {
@@ -16,15 +12,15 @@ public class AccountHelper {
     }
 
     public static boolean isPasswordValid(String password) {
-        return password != null && password.length() > MIN_PASSWORD_SIZE;
+        return password != null && password.length() > AccountConstants.MIN_PASSWORD_SIZE;
     }
 
     public static boolean isUsernameValid(String username) {
-        return username != null && username.length() > MIN_USERNAME_SIZE;
+        return username != null && username.length() > AccountConstants.MIN_USERNAME_SIZE;
     }
 
     public static boolean isPasswordValid(String originalPassword, String repeatedPassword) {
-        return originalPassword.equals(repeatedPassword) && originalPassword != null
-                && originalPassword.length() > MIN_PASSWORD_SIZE;
+        return originalPassword != null && originalPassword.equals(repeatedPassword)
+                && originalPassword.length() > AccountConstants.MIN_PASSWORD_SIZE;
     }
 }

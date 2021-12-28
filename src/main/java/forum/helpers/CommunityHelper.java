@@ -1,11 +1,10 @@
 package forum.helpers;
 
-public class CommunityHelper {
-    public static final int MIN_NAME_SIZE = 4;
-    public static final String COLOR_FORMAT = "^#([0-9]|[a-f]|[A-F]){6}$";
+import forum.constants.CommunityConstants;
 
+public class CommunityHelper {
     public static boolean isNameValid(String name) {
-        return name != null && name.length() > MIN_NAME_SIZE;
+        return name != null && name.length() > CommunityConstants.MIN_NAME_SIZE;
     }
 
     public static boolean isDescriptionValid(String description) {
@@ -13,6 +12,6 @@ public class CommunityHelper {
     }
 
     public static boolean isColorValid(String color) {
-        return color != null && color.matches(COLOR_FORMAT);
+        return color != null && color.matches(CommunityConstants.COLOR_FORMAT);
     }
 }

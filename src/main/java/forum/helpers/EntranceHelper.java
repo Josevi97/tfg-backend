@@ -1,14 +1,13 @@
 package forum.helpers;
 
-public class EntranceHelper {
-    public static final int MIN_TITLE_SIZE = 4;
-    public static final int MIN_BODY_SIZE = 4;
+import forum.constants.EntranceConstants;
 
+public class EntranceHelper {
     public static boolean isTitleValid(String title) {
-        return title != null && title.length() > MIN_TITLE_SIZE;
+        return title != null && title.length() > EntranceConstants.MIN_TITLE_SIZE;
     }
 
     public static boolean isBodyValid(String body) {
-        return body != null && body.length() > MIN_BODY_SIZE;
+        return body != null && body.length() > EntranceConstants.MIN_BODY_SIZE;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import forum.beans.AccountBean;
+import forum.constants.FileConstants;
 import forum.entities.AccountEntity;
 import forum.exceptions.AccountAlreadyExistsException;
 import forum.exceptions.AccountNotFoundException;
@@ -65,7 +66,7 @@ public class AccountService {
         AccountEntity accountEntity = accountBean.toEntity();
         accountEntity.setUsername(!AccountHelper.isUsernameValid(accountBean.getUsername()) ? this.generateRandomName()
                 : accountBean.getUsername());
-        accountEntity.setAvatar(AccountHelper.DEFAULT_IMAGE_ROUTE);
+        accountEntity.setAvatar(FileConstants.DEFAULT_IMAGE_ROUTE);
         accountEntity.setCreatedAt(LocalDateTime.now());
         accountEntity.setLastSessionAt(accountEntity.getCreatedAt());
 
@@ -108,7 +109,7 @@ public class AccountService {
         accountEntity.setPassword(accountBean.getPassword());
         accountEntity.setUsername(!AccountHelper.isUsernameValid(accountBean.getUsername()) ? this.generateRandomName()
                 : accountBean.getUsername());
-        accountEntity.setAvatar(AccountHelper.DEFAULT_IMAGE_ROUTE);
+        accountEntity.setAvatar(FileConstants.DEFAULT_IMAGE_ROUTE);
         accountEntity.setAdmin(accountBean.isAdmin());
 
         this.accountRepository.save(accountEntity);
