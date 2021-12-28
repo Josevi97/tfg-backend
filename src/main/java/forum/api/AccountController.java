@@ -19,6 +19,7 @@ import forum.beans.AccountBean;
 import forum.entities.AccountEntity;
 import forum.entities.AccountFollowEntity;
 import forum.entities.CommentEntity;
+import forum.entities.CommunityEntity;
 import forum.entities.CommunityListEntity;
 import forum.entities.EntranceEntity;
 import forum.exceptions.AccountAlreadyExistsException;
@@ -86,8 +87,22 @@ public class AccountController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<CommunityListEntity>>(
-                    this.communityListService.getCommunitiesByUserId(id, pageable), HttpStatus.OK);
+                    this.communityListService.getCommunitiesByUserId(id, pageable),
+                    HttpStatus.OK);
         } catch (AccountNotFoundException e) {
+            return new ResponseEntity<ApiResponse>(
+                    e.getApiResponse(),
+                    e.getApiResponse().getStatus());
+        }
+    }
+
+    @GetMapping("/communities/entrances")
+    public ResponseEntity<?> getSessionCommunitiesEntrances(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+        try {
+            return new ResponseEntity<Page<EntranceEntity>>(
+                    this.communityListService.getEntrancesBySessionCommunities(pageable),
+                    HttpStatus.OK);
+        } catch (InvalidSessionException | AccountNotFoundException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
