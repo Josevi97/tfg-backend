@@ -44,8 +44,7 @@ public class CommunityService {
 
     public void createCommunity(CommunityBean communityBean)
             throws IlegalCommunityArgumentsException, InvalidSessionException, AccountNotFoundException,
-            InsufficientPrivilegesException,
-            CommunityAlreadyExistsException {
+            InsufficientPrivilegesException, CommunityAlreadyExistsException {
         if (communityBean == null || !communityBean.isValid()) {
             throw new IlegalCommunityArgumentsException();
         }
@@ -59,7 +58,7 @@ public class CommunityService {
         }
 
         CommunityEntity communityEntity = communityBean.toEntity();
-        communityEntity.setImage("/assets/community/images/default_000.png");
+        communityEntity.setImage(null);
         communityEntity.setCreatedAt(LocalDateTime.now());
 
         this.communityRepository.save(communityEntity);
@@ -89,7 +88,7 @@ public class CommunityService {
         communityEntity.setName(communityBean.getName());
         communityEntity.setDescription(communityBean.getDescription());
         communityEntity.setColor(communityBean.getColor());
-        // Should update image too
+        communityEntity.setImage(null);
 
         this.communityRepository.save(communityEntity);
     }
