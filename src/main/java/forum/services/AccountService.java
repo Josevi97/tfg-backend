@@ -8,14 +8,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import forum.beans.AccountBean;
-import forum.constants.FileConstants;
 import forum.entities.AccountEntity;
 import forum.exceptions.AccountAlreadyExistsException;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.IlegalAccountArgumentsException;
 import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
-import forum.helpers.AccountHelper;
 import forum.repositories.AccountRepository;
 
 @Service
@@ -64,9 +62,7 @@ public class AccountService {
         }
 
         AccountEntity accountEntity = accountBean.toEntity();
-        accountEntity.setUsername(!AccountHelper.isUsernameValid(accountBean.getUsername()) ? this.generateRandomName()
-                : accountBean.getUsername());
-        accountEntity.setAvatar(FileConstants.DEFAULT_IMAGE_ROUTE);
+        accountEntity.setAvatar(null);
         accountEntity.setCreatedAt(LocalDateTime.now());
         accountEntity.setLastSessionAt(accountEntity.getCreatedAt());
 
@@ -107,9 +103,8 @@ public class AccountService {
         accountEntity.setLogin(accountBean.getLogin());
         accountEntity.setEmail(accountBean.getEmail());
         accountEntity.setPassword(accountBean.getPassword());
-        accountEntity.setUsername(!AccountHelper.isUsernameValid(accountBean.getUsername()) ? this.generateRandomName()
-                : accountBean.getUsername());
-        accountEntity.setAvatar(FileConstants.DEFAULT_IMAGE_ROUTE);
+        accountEntity.setUsername(accountBean.getUsername());
+        accountEntity.setAvatar(null);
         accountEntity.setAdmin(accountBean.isAdmin());
 
         this.accountRepository.save(accountEntity);
@@ -126,9 +121,5 @@ public class AccountService {
         }
 
         this.accountRepository.deleteById(id);
-    }
-
-    public String generateRandomName() {
-        return "Jolly_Cucumber";
     }
 }

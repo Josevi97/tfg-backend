@@ -57,7 +57,8 @@ public class AccountBean {
 
     public boolean isValid() {
         return AccountHelper.isLoginValid(this.login) && AccountHelper.isEmailValid(this.email) &&
-                AccountHelper.isPasswordValid(this.originalPassword, this.repeatedPassword);
+                AccountHelper.isPasswordValid(this.originalPassword, this.repeatedPassword)
+                && AccountHelper.isUsernameValid(this.username);
     }
 
     public AccountEntity toEntity() {
