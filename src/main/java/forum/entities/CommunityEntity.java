@@ -32,7 +32,7 @@ public class CommunityEntity {
     @Column(name = "color", length = 7, nullable = false)
     private String color;
 
-    @Column(name = "image", length = 255, nullable = false)
+    @Column(name = "image", length = 255, nullable = true)
     private String image;
 
     @Column(name = "created_at", nullable = false, updatable = false)

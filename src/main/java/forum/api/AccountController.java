@@ -19,7 +19,6 @@ import forum.beans.AccountBean;
 import forum.entities.AccountEntity;
 import forum.entities.AccountFollowEntity;
 import forum.entities.CommentEntity;
-import forum.entities.CommunityEntity;
 import forum.entities.CommunityListEntity;
 import forum.entities.EntranceEntity;
 import forum.exceptions.AccountAlreadyExistsException;
@@ -58,15 +57,9 @@ public class AccountController {
 
     @GetMapping
     public ResponseEntity<?> getAccounts(@PageableDefault(page = 0, size = 5) Pageable pageable) {
-        try {
-            return new ResponseEntity<Page<AccountEntity>>(
-                    this.accountService.getAllAccounts(pageable),
-                    HttpStatus.OK);
-        } catch (InvalidSessionException | InsufficientPrivilegesException | AccountNotFoundException e) {
-            return new ResponseEntity<ApiResponse>(
-                    e.getApiResponse(),
-                    e.getApiResponse().getStatus());
-        }
+        return new ResponseEntity<Page<AccountEntity>>(
+                this.accountService.getAllAccounts(pageable),
+                HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

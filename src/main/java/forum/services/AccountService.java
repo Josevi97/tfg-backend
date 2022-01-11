@@ -25,12 +25,7 @@ public class AccountService {
     @Autowired
     AccountRepository accountRepository;
 
-    public Page<AccountEntity> getAllAccounts(Pageable pageable)
-            throws InvalidSessionException, AccountNotFoundException, InsufficientPrivilegesException {
-        if (!sessionService.isAdmin()) {
-            throw new InsufficientPrivilegesException();
-        }
-
+    public Page<AccountEntity> getAllAccounts(Pageable pageable) {
         return this.accountRepository.findAll(pageable);
     }
 
