@@ -73,7 +73,6 @@ public class AccountFollowService {
 
         AccountFollowEntity accountFollowEntity = new AccountFollowEntity();
         accountFollowEntity.setAccountFollowId(accountFollowId);
-        accountFollowEntity.setCreatedAt(LocalDateTime.now());
 
         this.accountFollowRepository.save(accountFollowEntity);
     }
