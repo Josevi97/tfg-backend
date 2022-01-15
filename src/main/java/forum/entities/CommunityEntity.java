@@ -29,9 +29,6 @@ public class CommunityEntity {
     @Column(name = "description", length = 255, nullable = false)
     private String description;
 
-    @Column(name = "color", length = 7, nullable = false)
-    private String color;
-
     @Column(name = "image", length = 255, nullable = true)
     private String image;
 
@@ -56,10 +53,6 @@ public class CommunityEntity {
         this.description = description;
     }
 
-    public void setColor(String color) {
-        this.color = color;
-    }
-
     public void setImage(String image) {
         this.image = image;
     }
@@ -78,10 +71,6 @@ public class CommunityEntity {
 
     public String getDescription() {
         return this.description;
-    }
-
-    public String getColor() {
-        return this.color;
     }
 
     public String getImage() {

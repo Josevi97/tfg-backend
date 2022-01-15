@@ -10,8 +10,4 @@ public class CommunityHelper {
     public static boolean isDescriptionValid(String description) {
         return description != null;
     }
-
-    public static boolean isColorValid(String color) {
-        return color != null && color.matches(CommunityConstants.COLOR_FORMAT);
-    }
 }

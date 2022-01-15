@@ -87,7 +87,6 @@ public class CommunityService {
         CommunityEntity communityEntity = this.communityRepository.findById(id).get();
         communityEntity.setName(communityBean.getName());
         communityEntity.setDescription(communityBean.getDescription());
-        communityEntity.setColor(communityBean.getColor());
         communityEntity.setImage(null);
 
         this.communityRepository.save(communityEntity);
