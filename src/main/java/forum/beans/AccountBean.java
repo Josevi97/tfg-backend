@@ -9,6 +9,7 @@ public class AccountBean {
     private String originalPassword;
     private String repeatedPassword;
     private String username;
+    private String description;
     // Falta la imagen
     private boolean isAdmin;
 
@@ -31,6 +32,14 @@ public class AccountBean {
         this.repeatedPassword = repeatedPassword;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public void setAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
     }
@@ -51,6 +60,10 @@ public class AccountBean {
         return this.username;
     }
 
+    public String getDescription() {
+        return this.description;
+    }
+
     public boolean isAdmin() {
         return this.isAdmin;
     }
@@ -67,6 +80,7 @@ public class AccountBean {
         accountEntity.setEmail(this.email);
         accountEntity.setPassword(this.originalPassword);
         accountEntity.setUsername(this.username);
+        accountEntity.setDescription(this.description);
         // Falta la imagen que deberia ser un MultiCast o bien que sea el controlador el
         // que dirija esta interaccion
         accountEntity.setAdmin(this.isAdmin);

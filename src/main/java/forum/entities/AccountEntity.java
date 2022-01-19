@@ -36,6 +36,9 @@ public class AccountEntity {
     @Column(name = "username", length = 255, nullable = false)
     private String username;
 
+    @Column(name = "description", length = 255, nullable = true)
+    private String description;
+
     @Column(name = "avatar", length = 255, nullable = true)
     private String avatar;
 
@@ -90,6 +93,10 @@ public class AccountEntity {
         this.username = username;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
@@ -120,6 +127,10 @@ public class AccountEntity {
 
     public String getUsername() {
         return this.username;
+    }
+
+    public String getDescription() {
+        return this.description;
     }
 
     public String getAvatar() {
