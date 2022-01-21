@@ -32,6 +32,7 @@ import forum.helpers.ApiResponse;
 import forum.services.CommunityListService;
 import forum.services.CommunityService;
 import forum.services.EntranceService;
+import forum.services.EntranceVoteService;
 
 @RestController
 @RequestMapping("/communities")
@@ -45,6 +46,9 @@ public class CommunityController {
 
     @Autowired
     EntranceService entranceService;
+
+    @Autowired
+    EntranceVoteService entranceVoteService;
 
     @GetMapping
     public ResponseEntity<?> getCommunities(@PageableDefault(page = 0, size = 5) Pageable pageable) {
@@ -79,7 +83,8 @@ public class CommunityController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<EntranceEntity>>(
-                    this.entranceService.getEntrancesByCommunityId(id, pageable),
+                    this.entranceVoteService.checkVoteOfSession(
+                            this.entranceService.getEntrancesByCommunityId(id, pageable)),
                     HttpStatus.OK);
         } catch (CommunityNotFoundException e) {
             return new ResponseEntity<ApiResponse>(

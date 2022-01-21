@@ -1,10 +1,10 @@
 package forum.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import forum.combinedIds.EntranceVoteId;
-import forum.entities.AccountEntity;
 import forum.entities.EntranceEntity;
 import forum.entities.EntranceVoteEntity;
 import forum.exceptions.AccountNotFoundException;
@@ -88,5 +88,10 @@ public class EntranceVoteService {
         }
         entranceEntity.setSessionVoted(value);
         return entranceEntity;
+    }
+
+    public Page<EntranceEntity> checkVoteOfSession(Page<EntranceEntity> entrances) {
+        entrances.forEach(entrance -> this.checkVoteOfSession(entrance));
+        return entrances;
     }
 }

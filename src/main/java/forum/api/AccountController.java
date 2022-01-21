@@ -35,6 +35,7 @@ import forum.services.AccountService;
 import forum.services.CommentService;
 import forum.services.CommunityListService;
 import forum.services.EntranceService;
+import forum.services.EntranceVoteService;
 
 @RestController
 @RequestMapping("/accounts")
@@ -54,6 +55,9 @@ public class AccountController {
 
     @Autowired
     AccountFollowService accountFollowService;
+
+    @Autowired
+    EntranceVoteService entranceVoteService;
 
     @GetMapping
     public ResponseEntity<?> getAccounts(@PageableDefault(page = 0, size = 5) Pageable pageable) {
@@ -107,7 +111,8 @@ public class AccountController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<EntranceEntity>>(
-                    this.entranceService.getEntrancesByAccountId(id, pageable),
+                    this.entranceVoteService.checkVoteOfSession(
+                            this.entranceService.getEntrancesByAccountId(id, pageable)),
                     HttpStatus.OK);
         } catch (AccountNotFoundException e) {
             return new ResponseEntity<ApiResponse>(
