@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -49,6 +50,9 @@ public class EntranceEntity {
     @OneToMany(mappedBy = "entranceVoteId.entrance", cascade = CascadeType.REMOVE)
     private List<EntranceVoteEntity> votes = new ArrayList<>();
 
+    @Transient
+    private int sessionVoted;
+
     public EntranceEntity() {
     }
 
@@ -70,6 +74,10 @@ public class EntranceEntity {
 
     public void setCommunity(CommunityEntity community) {
         this.community = community;
+    }
+
+    public void setSessionVoted(int sessionVoted) {
+        this.sessionVoted = sessionVoted;
     }
 
     public Long getId() {
@@ -107,5 +115,9 @@ public class EntranceEntity {
     public Long getCalculatedVotes() {
         Long plus = this.votes.stream().filter(vote -> vote.getVote()).count();
         return plus - (this.votes.size() - plus);
+    }
+
+    public int getSessionVoted() {
+        return this.sessionVoted;
     }
 }

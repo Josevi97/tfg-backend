@@ -49,8 +49,11 @@ public class EntranceController {
 
     @GetMapping
     public ResponseEntity<?> getEntrances(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+        Page<EntranceEntity> entrances = this.entranceService.getAllEntrances(pageable);
+        entrances.forEach(entrance -> this.entranceVoteService.checkVoteOfSession(entrance));
+
         return new ResponseEntity<Page<EntranceEntity>>(
-                this.entranceService.getAllEntrances(pageable),
+                entrances,
                 HttpStatus.OK);
     }
 
