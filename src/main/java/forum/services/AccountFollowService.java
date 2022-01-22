@@ -93,4 +93,34 @@ public class AccountFollowService {
 
         this.accountFollowRepository.deleteById(accountFollowId);
     }
+
+    public AccountEntity checkFollowOfSession(AccountEntity accountEntity) {
+        int value = -1;
+
+        if (this.accountRepository.existsById(accountEntity.getId())) {
+            try {
+                AccountFollowId sessionFollowAccountId = new AccountFollowId(
+                        this.sessionService.getUser(),
+                        accountEntity);
+                AccountFollowId sessionFollowedByAccountId = new AccountFollowId(
+                        accountEntity,
+                        this.sessionService.getUser());
+
+                if (this.accountFollowRepository.existsById(sessionFollowAccountId)) {
+                    value = 0;
+                } else if (this.accountFollowRepository.existsById(sessionFollowedByAccountId)) {
+                    value = 1;
+                }
+            } catch (InvalidSessionException | AccountNotFoundException e) {
+            }
+        }
+
+        accountEntity.setSessionFollow(value);
+        return accountEntity;
+    }
+
+    public Page<AccountEntity> checkVoteOfSession(Page<AccountEntity> accounts) {
+        accounts.forEach(account -> this.checkFollowOfSession(account));
+        return accounts;
+    }
 }

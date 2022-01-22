@@ -70,7 +70,8 @@ public class AccountController {
     public ResponseEntity<?> getAccount(@PathVariable Long id) {
         try {
             return new ResponseEntity<AccountEntity>(
-                    this.accountService.getAccount(id),
+                    this.accountFollowService.checkFollowOfSession(
+                            this.accountService.getAccount(id)),
                     HttpStatus.OK);
         } catch (AccountNotFoundException e) {
             return new ResponseEntity<ApiResponse>(

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -74,6 +75,9 @@ public class AccountEntity {
     @OneToMany(mappedBy = "commentVoteId.account", cascade = CascadeType.REMOVE)
     private List<CommentVoteEntity> commentVotes = new ArrayList<>();
 
+    @Transient
+    private int sessionFollow;
+
     public AccountEntity() {
     }
 
@@ -111,6 +115,10 @@ public class AccountEntity {
 
     public void setLastSessionAt(LocalDateTime lastSessionAt) {
         this.lastSessionAt = lastSessionAt;
+    }
+
+    public void setSessionFollow(int sessionFollow) {
+        this.sessionFollow = sessionFollow;
     }
 
     public Long getId() {
@@ -175,5 +183,9 @@ public class AccountEntity {
 
     public int getCommentVotes() {
         return this.commentVotes.size();
+    }
+
+    public int getSessionFollow() {
+        return this.sessionFollow;
     }
 }
