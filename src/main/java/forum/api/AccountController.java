@@ -33,6 +33,7 @@ import forum.helpers.ApiResponse;
 import forum.services.AccountFollowService;
 import forum.services.AccountService;
 import forum.services.CommentService;
+import forum.services.CommentVoteService;
 import forum.services.CommunityListService;
 import forum.services.EntranceService;
 import forum.services.EntranceVoteService;
@@ -58,6 +59,9 @@ public class AccountController {
 
     @Autowired
     EntranceVoteService entranceVoteService;
+
+    @Autowired
+    CommentVoteService commentVoteService;
 
     @GetMapping
     public ResponseEntity<?> getAccounts(@PageableDefault(page = 0, size = 5) Pageable pageable) {
@@ -127,7 +131,8 @@ public class AccountController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<CommentEntity>>(
-                    this.commentService.getCommentsByAccountId(id, pageable),
+                    this.commentVoteService.checkVoteOfSession(
+                            this.commentService.getCommentsByAccountId(id, pageable)),
                     HttpStatus.OK);
         } catch (AccountNotFoundException e) {
             return new ResponseEntity<ApiResponse>(

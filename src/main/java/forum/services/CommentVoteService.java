@@ -1,9 +1,11 @@
 package forum.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import forum.combinedIds.CommentVoteId;
+import forum.entities.CommentEntity;
 import forum.entities.CommentVoteEntity;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.CommentNotFoundException;
@@ -63,5 +65,30 @@ public class CommentVoteService {
         }
 
         this.commentVoteRepository.deleteById(commentVoteId);
+    }
+
+    public CommentEntity checkVoteOfSession(CommentEntity commentEntity) {
+        int value = -1;
+
+        if (this.commentRepository.existsById(commentEntity.getId())) {
+            try {
+                CommentVoteId commentVoteId = new CommentVoteId(
+                        this.sessionService.getUser(),
+                        commentEntity);
+
+                if (this.commentVoteRepository.existsById(commentVoteId)) {
+                    value = this.commentVoteRepository.findById(commentVoteId).get().getVote() ? 1 : 0;
+                }
+            } catch (InvalidSessionException | AccountNotFoundException e) {
+            }
+        }
+
+        commentEntity.setSessionVoted(value);
+        return commentEntity;
+    }
+
+    public Page<CommentEntity> checkVoteOfSession(Page<CommentEntity> comments) {
+        comments.forEach(comment -> this.checkVoteOfSession(comment));
+        return comments;
     }
 }

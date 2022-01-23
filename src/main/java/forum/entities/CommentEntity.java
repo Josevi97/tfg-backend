@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -50,6 +51,9 @@ public class CommentEntity {
     @OneToMany(mappedBy = "commentVoteId.comment", cascade = CascadeType.REMOVE)
     private List<CommentVoteEntity> votes = new ArrayList<>();
 
+    @Transient
+    private int sessionVoted;
+
     public CommentEntity() {
     }
 
@@ -71,6 +75,10 @@ public class CommentEntity {
 
     public void setComment(CommentEntity comment) {
         this.comment = comment;
+    }
+
+    public void setSessionVoted(int sessionVoted) {
+        this.sessionVoted = sessionVoted;
     }
 
     public Long getId() {
@@ -108,5 +116,9 @@ public class CommentEntity {
     public Long getCalculatedVotes() {
         Long plus = this.votes.stream().filter(vote -> vote.getVote()).count();
         return plus - (this.votes.size() - plus);
+    }
+
+    public int getSessionVoted() {
+        return this.sessionVoted;
     }
 }
