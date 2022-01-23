@@ -5,7 +5,6 @@ import forum.helpers.CommentHelper;
 
 public class CommentBean {
     private String body;
-    private Long commentId;
 
     public CommentBean() {
     }
@@ -14,16 +13,8 @@ public class CommentBean {
         this.body = body;
     }
 
-    public void setCommentId(Long commentId) {
-        this.commentId = commentId;
-    }
-
     public String getBody() {
         return this.body;
-    }
-
-    public Long getCommentId() {
-        return this.commentId;
     }
 
     public boolean isValid() {

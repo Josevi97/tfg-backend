@@ -37,7 +37,7 @@ public class CommentEntity {
     private AccountEntity account;
 
     @ManyToOne
-    @JoinColumn(name = "entrance_id", nullable = false)
+    @JoinColumn(name = "entrance_id", nullable = true)
     private EntranceEntity entrance;
 
     @ManyToOne

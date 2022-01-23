@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import forum.beans.CommentBean;
 import forum.beans.VoteBean;
 import forum.entities.CommentEntity;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.CommentNotFoundException;
 import forum.exceptions.CommentVoteAlreadyExistsException;
 import forum.exceptions.CommentVoteNotFoundException;
+import forum.exceptions.IlegalCommentArguments;
 import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
 import forum.helpers.ApiResponse;
@@ -61,6 +63,21 @@ public class CommentController {
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
         }
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<?> createComment(@PathVariable Long id, @RequestBody CommentBean commentBean) {
+        ApiResponse response;
+
+        try {
+            this.commentService.createCommentInComment(id, commentBean);
+            response = new ApiResponse("comment has been created", HttpStatus.OK);
+        } catch (IlegalCommentArguments | CommentNotFoundException | InvalidSessionException
+                | AccountNotFoundException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
     }
 
     @PostMapping("/{id}/vote")

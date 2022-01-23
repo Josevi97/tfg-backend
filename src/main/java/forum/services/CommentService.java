@@ -66,8 +66,8 @@ public class CommentService {
         return this.commentRepository.findById(id).get();
     }
 
-    public void createComment(Long id, CommentBean commentBean)
-            throws IlegalCommentArguments, EntranceNotFoundException, CommentNotFoundException, InvalidSessionException,
+    public void createCommentInEntrance(Long id, CommentBean commentBean)
+            throws IlegalCommentArguments, EntranceNotFoundException, InvalidSessionException,
             AccountNotFoundException {
         if (commentBean == null || !commentBean.isValid()) {
             throw new IlegalCommentArguments();
@@ -77,15 +77,28 @@ public class CommentService {
             throw new EntranceNotFoundException();
         }
 
-        if (commentBean.getCommentId() != null && !this.commentRepository.existsById(commentBean.getCommentId())) {
+        CommentEntity commentEntity = commentBean.toEntity();
+        commentEntity.setAccount(this.accountRepository.findById(this.sessionService.getUser().getId()).get());
+        commentEntity.setEntrance(this.entranceRepository.findById(id).get());
+        commentEntity.setCreatedAt(LocalDateTime.now());
+
+        this.commentRepository.save(commentEntity);
+    }
+
+    public void createCommentInComment(Long id, CommentBean commentBean)
+            throws IlegalCommentArguments, CommentNotFoundException, InvalidSessionException,
+            AccountNotFoundException {
+        if (commentBean == null || !commentBean.isValid()) {
+            throw new IlegalCommentArguments();
+        }
+
+        if (!this.commentRepository.existsById(id)) {
             throw new CommentNotFoundException();
         }
 
         CommentEntity commentEntity = commentBean.toEntity();
         commentEntity.setAccount(this.accountRepository.findById(this.sessionService.getUser().getId()).get());
-        commentEntity.setEntrance(this.entranceRepository.findById(id).get());
-        commentEntity.setComment(commentBean.getCommentId() == null ? null
-                : this.commentRepository.findById(commentBean.getCommentId()).get());
+        commentEntity.setComment(this.commentRepository.findById(id).get());
         commentEntity.setCreatedAt(LocalDateTime.now());
 
         this.commentRepository.save(commentEntity);

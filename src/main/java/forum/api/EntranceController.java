@@ -21,7 +21,6 @@ import forum.beans.VoteBean;
 import forum.entities.CommentEntity;
 import forum.entities.EntranceEntity;
 import forum.exceptions.AccountNotFoundException;
-import forum.exceptions.CommentNotFoundException;
 import forum.exceptions.EntranceNotFoundException;
 import forum.exceptions.EntranceVoteAlreadyExistsException;
 import forum.exceptions.EntranceVoteNotFoundException;
@@ -87,10 +86,10 @@ public class EntranceController {
         ApiResponse response;
 
         try {
-            this.commentService.createComment(id, commentBean);
+            this.commentService.createCommentInEntrance(id, commentBean);
             response = new ApiResponse("comment has been created", HttpStatus.OK);
-        } catch (IlegalCommentArguments | EntranceNotFoundException | CommentNotFoundException
-                | InvalidSessionException | AccountNotFoundException e) {
+        } catch (IlegalCommentArguments | EntranceNotFoundException | InvalidSessionException
+                | AccountNotFoundException e) {
             response = e.getApiResponse();
         }
 

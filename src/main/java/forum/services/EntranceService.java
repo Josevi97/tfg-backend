@@ -96,8 +96,7 @@ public class EntranceService {
 
         EntranceEntity entranceEntity = this.entranceRepository.findById(id).get();
 
-        if (!this.sessionService.getUser().isAdmin()
-                && !this.sessionService.itsMe(entranceEntity.getAccount().getId())) {
+        if (!this.sessionService.itsMe(entranceEntity.getAccount().getId())) {
             throw new InsufficientPrivilegesException();
         }
 
