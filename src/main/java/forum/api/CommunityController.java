@@ -69,7 +69,8 @@ public class CommunityController {
     public ResponseEntity<?> getCommunity(@PathVariable Long id) {
         try {
             return new ResponseEntity<CommunityEntity>(
-                    this.communityService.getCommunity(id),
+                    this.communityListService.checkFollowOfSession(
+                            this.communityService.getCommunity(id)),
                     HttpStatus.OK);
         } catch (CommunityNotFoundException e) {
             return new ResponseEntity<ApiResponse>(

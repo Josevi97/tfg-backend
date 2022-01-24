@@ -94,4 +94,29 @@ public class CommunityListService {
 
         this.communityListRepository.deleteById(communityListId);
     }
+
+    public CommunityEntity checkFollowOfSession(CommunityEntity communityEntity) {
+        int value = -1;
+
+        if (this.communityRepository.existsById(communityEntity.getId())) {
+            try {
+                CommunityListId communityListId = new CommunityListId(
+                        this.sessionService.getUser(),
+                        communityEntity);
+
+                if (this.communityListRepository.existsById(communityListId)) {
+                    value = 0;
+                }
+            } catch (InvalidSessionException | AccountNotFoundException e) {
+            }
+        }
+
+        communityEntity.setSessionFollow(value);
+        return communityEntity;
+    }
+
+    public Page<CommunityEntity> checkVoteOfSession(Page<CommunityEntity> communities) {
+        communities.forEach(community -> this.checkFollowOfSession(community));
+        return communities;
+    }
 }

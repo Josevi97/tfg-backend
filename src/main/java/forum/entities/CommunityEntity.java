@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -42,6 +43,9 @@ public class CommunityEntity {
     @OneToMany(mappedBy = "community", cascade = CascadeType.REMOVE)
     private List<EntranceEntity> entrances = new ArrayList<>();
 
+    @Transient
+    private int sessionFollow;
+
     public CommunityEntity() {
     }
 
@@ -59,6 +63,10 @@ public class CommunityEntity {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setSessionFollow(int sessionFollow) {
+        this.sessionFollow = sessionFollow;
     }
 
     public Long getId() {
@@ -87,5 +95,9 @@ public class CommunityEntity {
 
     public int getEntrances() {
         return this.entrances.size();
+    }
+
+    public int getSessionFollow() {
+        return this.sessionFollow;
     }
 }
