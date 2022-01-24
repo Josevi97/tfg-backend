@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import forum.combinedIds.CommunityListId;
 import forum.entities.CommunityEntity;
 import forum.entities.CommunityListEntity;
-import forum.entities.EntranceEntity;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.CommunityAlreadyFollowedException;
 import forum.exceptions.CommunityNotFollowedException;
@@ -53,10 +52,13 @@ public class CommunityListService {
                         pageable);
     }
 
-    public Page<EntranceEntity> getEntrancesBySessionCommunities(Pageable pageable)
+    public List<CommunityEntity> getCommunitiesBySession()
             throws InvalidSessionException, AccountNotFoundException {
-        // This should be handled via query to ensure its correctly funcionality.
-        return null;
+
+        return this.communityListRepository.findByCommunityListIdAccountEntity(this.sessionService.getUser())
+                .stream()
+                .map(CommunityListEntity::getCommunity)
+                .collect(Collectors.toList());
     }
 
     public void createFollow(Long id)

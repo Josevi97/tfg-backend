@@ -1,6 +1,7 @@
 package forum.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import forum.beans.EntranceBean;
+import forum.entities.CommunityEntity;
 import forum.entities.EntranceEntity;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.CommunityNotFoundException;
@@ -62,6 +64,10 @@ public class EntranceService {
         }
 
         return this.entranceRepository.findById(id).get();
+    }
+
+    public Page<EntranceEntity> getEntrancesByCommunities(List<CommunityEntity> communities, Pageable pageable) {
+        return this.entranceRepository.findByCommunityIn(communities, pageable);
     }
 
     public void createEntrance(Long id, EntranceBean entranceBean)

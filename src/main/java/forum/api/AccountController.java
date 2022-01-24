@@ -70,6 +70,21 @@ public class AccountController {
                 HttpStatus.OK);
     }
 
+    @GetMapping("/communities/entrances")
+    public ResponseEntity<?> getEntrancesBySessionCommunities(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+        try {
+            return new ResponseEntity<Page<EntranceEntity>>(
+                    this.entranceVoteService.checkVoteOfSession(
+                            this.entranceService.getEntrancesByCommunities(
+                                    this.communityListService.getCommunitiesBySession(), pageable)),
+                    HttpStatus.OK);
+        } catch (InvalidSessionException | AccountNotFoundException e) {
+            return new ResponseEntity<ApiResponse>(
+                    e.getApiResponse(),
+                    e.getApiResponse().getStatus());
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getAccount(@PathVariable Long id) {
         try {
@@ -92,19 +107,6 @@ public class AccountController {
                     this.communityListService.getCommunitiesByUserId(id, pageable),
                     HttpStatus.OK);
         } catch (AccountNotFoundException e) {
-            return new ResponseEntity<ApiResponse>(
-                    e.getApiResponse(),
-                    e.getApiResponse().getStatus());
-        }
-    }
-
-    @GetMapping("/communities/entrances")
-    public ResponseEntity<?> getSessionCommunitiesEntrances(@PageableDefault(page = 0, size = 5) Pageable pageable) {
-        try {
-            return new ResponseEntity<Page<EntranceEntity>>(
-                    this.communityListService.getEntrancesBySessionCommunities(pageable),
-                    HttpStatus.OK);
-        } catch (InvalidSessionException | AccountNotFoundException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
