@@ -1,5 +1,8 @@
 package forum.services;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +51,15 @@ public class AccountFollowService {
         return this.accountFollowRepository.findByAccountFollowIdTo(
                 this.accountRepository.findById(id).get(),
                 pageable);
+    }
+
+    public List<AccountEntity> getFollowingBySession()
+            throws InvalidSessionException, AccountNotFoundException {
+
+        return this.accountFollowRepository.findByAccountFollowIdFrom(this.sessionService.getUser())
+                .stream()
+                .map(AccountFollowEntity::getTo)
+                .collect(Collectors.toList());
     }
 
     public void createFollow(Long id)
@@ -117,7 +129,7 @@ public class AccountFollowService {
         return accountEntity;
     }
 
-    public Page<AccountEntity> checkVoteOfSession(Page<AccountEntity> accounts) {
+    public Page<AccountEntity> checkFollowOfSession(Page<AccountEntity> accounts) {
         accounts.forEach(account -> this.checkFollowOfSession(account));
         return accounts;
     }

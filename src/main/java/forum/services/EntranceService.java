@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import forum.beans.EntranceBean;
+import forum.entities.AccountEntity;
 import forum.entities.CommunityEntity;
 import forum.entities.EntranceEntity;
 import forum.exceptions.AccountNotFoundException;
@@ -68,6 +69,10 @@ public class EntranceService {
 
     public Page<EntranceEntity> getEntrancesByCommunities(List<CommunityEntity> communities, Pageable pageable) {
         return this.entranceRepository.findByCommunityIn(communities, pageable);
+    }
+
+    public Page<EntranceEntity> getEntrancesByAccounts(List<AccountEntity> accounts, Pageable pageable) {
+        return this.entranceRepository.findByAccountIn(accounts, pageable);
     }
 
     public void createEntrance(Long id, EntranceBean entranceBean)

@@ -85,6 +85,21 @@ public class AccountController {
         }
     }
 
+    @GetMapping("/following/entrances")
+    public ResponseEntity<?> getEntrancesBySessionFollowTo(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+        try {
+            return new ResponseEntity<Page<EntranceEntity>>(
+                    this.entranceVoteService.checkVoteOfSession(
+                            this.entranceService.getEntrancesByAccounts(
+                                    this.accountFollowService.getFollowingBySession(), pageable)),
+                    HttpStatus.OK);
+        } catch (InvalidSessionException | AccountNotFoundException e) {
+            return new ResponseEntity<ApiResponse>(
+                    e.getApiResponse(),
+                    e.getApiResponse().getStatus());
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getAccount(@PathVariable Long id) {
         try {
