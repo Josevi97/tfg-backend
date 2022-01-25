@@ -30,6 +30,7 @@ import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
 import forum.helpers.ApiResponse;
 import forum.services.CommentService;
+import forum.services.CommentVoteService;
 import forum.services.EntranceService;
 import forum.services.EntranceVoteService;
 
@@ -45,6 +46,9 @@ public class EntranceController {
 
     @Autowired
     EntranceVoteService entranceVoteService;
+
+    @Autowired
+    CommentVoteService commentVoteService;
 
     @GetMapping
     public ResponseEntity<?> getEntrances(@PageableDefault(page = 0, size = 5) Pageable pageable) {
@@ -72,7 +76,8 @@ public class EntranceController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<CommentEntity>>(
-                    this.commentService.getCommentsByEntranceId(id, pageable),
+                    this.commentVoteService.checkVoteOfSession(
+                            this.commentService.getCommentsByEntranceId(id, pageable)),
                     HttpStatus.OK);
         } catch (EntranceNotFoundException e) {
             return new ResponseEntity<ApiResponse>(

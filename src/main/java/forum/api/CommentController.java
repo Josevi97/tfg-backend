@@ -43,7 +43,8 @@ public class CommentController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<CommentEntity>>(
-                    this.commentService.getCommentsByCommentId(id, pageable),
+                    this.commentVoteService.checkVoteOfSession(
+                            this.commentService.getCommentsByCommentId(id, pageable)),
                     HttpStatus.OK);
         } catch (CommentNotFoundException e) {
             return new ResponseEntity<ApiResponse>(
