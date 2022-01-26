@@ -163,7 +163,8 @@ public class AccountController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<AccountFollowEntity>>(
-                    this.accountFollowService.getFollowingByAccountId(id, pageable),
+                    this.accountFollowService.checkFollowOfSessionToFollows(
+                            this.accountFollowService.getFollowingByAccountId(id, pageable)),
                     HttpStatus.OK);
         } catch (AccountNotFoundException e) {
             return new ResponseEntity<ApiResponse>(
@@ -177,7 +178,8 @@ public class AccountController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<AccountFollowEntity>>(
-                    this.accountFollowService.getFollowersByAccountId(id, pageable),
+                    this.accountFollowService.checkFollowOfSessionToFollows(
+                            this.accountFollowService.getFollowersByAccountId(id, pageable)),
                     HttpStatus.OK);
         } catch (AccountNotFoundException e) {
             return new ResponseEntity<ApiResponse>(

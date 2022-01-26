@@ -129,6 +129,15 @@ public class AccountFollowService {
         return accountEntity;
     }
 
+    public Page<AccountFollowEntity> checkFollowOfSessionToFollows(Page<AccountFollowEntity> accountsFollowEntity) {
+        accountsFollowEntity.forEach(accountFollowEntity -> {
+            this.checkFollowOfSession(accountFollowEntity.getFrom());
+            this.checkFollowOfSession(accountFollowEntity.getTo());
+        });
+
+        return accountsFollowEntity;
+    }
+
     public Page<AccountEntity> checkFollowOfSession(Page<AccountEntity> accounts) {
         accounts.forEach(account -> this.checkFollowOfSession(account));
         return accounts;
