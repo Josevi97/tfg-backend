@@ -27,7 +27,7 @@ public class CommunityEntity {
     @Column(name = "name", unique = true, length = 255, nullable = false)
     private String name;
 
-    @Column(name = "description", length = 255, nullable = false)
+    @Column(name = "description", length = 255, nullable = true)
     private String description;
 
     @Column(name = "image", length = 255, nullable = true)
