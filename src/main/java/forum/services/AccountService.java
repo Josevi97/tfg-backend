@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import forum.beans.AccountBean;
+import forum.beans.AccountUpdateBean;
 import forum.entities.AccountEntity;
 import forum.exceptions.AccountAlreadyExistsException;
 import forum.exceptions.AccountNotFoundException;
@@ -64,7 +65,7 @@ public class AccountService {
         this.accountRepository.save(accountEntity);
     }
 
-    public void updateAccount(Long id, AccountBean accountBean)
+    public void updateAccount(Long id, AccountUpdateBean accountBean)
             throws IlegalAccountArgumentsException, InvalidSessionException, AccountNotFoundException,
             AccountAlreadyExistsException,
             InsufficientPrivilegesException {
@@ -97,7 +98,7 @@ public class AccountService {
         AccountEntity accountEntity = this.accountRepository.findById(id).get();
         accountEntity.setLogin(accountBean.getLogin());
         accountEntity.setEmail(accountBean.getEmail());
-        accountEntity.setPassword(accountBean.getPassword());
+        accountEntity.setDescription(accountBean.getDescription());
         accountEntity.setUsername(accountBean.getUsername());
         accountEntity.setAvatar(null);
         accountEntity.setAdmin(accountBean.isAdmin());

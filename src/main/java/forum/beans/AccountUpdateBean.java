@@ -3,16 +3,15 @@ package forum.beans;
 import forum.entities.AccountEntity;
 import forum.helpers.AccountHelper;
 
-public class AccountBean {
+public class AccountUpdateBean {
     private String login;
     private String email;
-    private String originalPassword;
-    private String repeatedPassword;
     private String username;
+    private String description;
     // Falta la imagen
     private boolean isAdmin;
 
-    public AccountBean() {
+    public AccountUpdateBean() {
     }
 
     public void setLogin(String login) {
@@ -23,16 +22,12 @@ public class AccountBean {
         this.email = email;
     }
 
-    public void setOriginalPassword(String originalPassword) {
-        this.originalPassword = originalPassword;
-    }
-
-    public void setRepeatedPassword(String repeatedPassword) {
-        this.repeatedPassword = repeatedPassword;
-    }
-
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public void setAdmin(boolean isAdmin) {
@@ -47,12 +42,12 @@ public class AccountBean {
         return this.email;
     }
 
-    public String getPassword() {
-        return this.originalPassword;
-    }
-
     public String getUsername() {
         return this.username;
+    }
+
+    public String getDescription() {
+        return this.description;
     }
 
     public boolean isAdmin() {
@@ -61,16 +56,15 @@ public class AccountBean {
 
     public boolean isValid() {
         return AccountHelper.isLoginValid(this.login) && AccountHelper.isEmailValid(this.email) &&
-                AccountHelper.isPasswordValid(this.originalPassword, this.repeatedPassword)
-                && AccountHelper.isUsernameValid(this.username);
+                AccountHelper.isUsernameValid(this.username);
     }
 
     public AccountEntity toEntity() {
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setLogin(this.login);
         accountEntity.setEmail(this.email);
-        accountEntity.setPassword(this.originalPassword);
         accountEntity.setUsername(this.username);
+        accountEntity.setDescription(this.description);
         // Falta la imagen que deberia ser un MultiCast o bien que sea el controlador el
         // que dirija esta interaccion
         accountEntity.setAdmin(this.isAdmin);

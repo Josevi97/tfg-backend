@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import forum.beans.AccountBean;
+import forum.beans.AccountUpdateBean;
 import forum.entities.AccountEntity;
 import forum.entities.AccountFollowEntity;
 import forum.entities.CommentEntity;
@@ -233,7 +234,7 @@ public class AccountController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountBean accountBean) {
+    public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountUpdateBean accountBean) {
         ApiResponse response;
 
         try {
