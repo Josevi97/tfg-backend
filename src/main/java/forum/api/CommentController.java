@@ -57,7 +57,8 @@ public class CommentController {
     public ResponseEntity<?> getComment(@PathVariable Long id) {
         try {
             return new ResponseEntity<CommentEntity>(
-                    this.commentService.getComment(id),
+                    this.commentVoteService.checkVoteOfSession(
+                            this.commentService.getComment(id)),
                     HttpStatus.OK);
         } catch (CommentNotFoundException e) {
             return new ResponseEntity<ApiResponse>(

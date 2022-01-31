@@ -62,7 +62,8 @@ public class EntranceController {
     public ResponseEntity<?> getEntrance(@PathVariable Long id) {
         try {
             return new ResponseEntity<EntranceEntity>(
-                    this.entranceService.getEntrance(id),
+                    this.entranceVoteService.checkVoteOfSession(
+                            this.entranceService.getEntrance(id)),
                     HttpStatus.OK);
         } catch (EntranceNotFoundException e) {
             return new ResponseEntity<ApiResponse>(
