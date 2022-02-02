@@ -3,6 +3,7 @@ package forum.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,8 @@ public class EntranceController {
     CommentVoteService commentVoteService;
 
     @GetMapping
-    public ResponseEntity<?> getEntrances(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+    public ResponseEntity<?> getEntrances(
+            @PageableDefault(page = 0, size = 5, sort = { "id" }, direction = Sort.Direction.DESC) Pageable pageable) {
         return new ResponseEntity<Page<EntranceEntity>>(
                 this.entranceVoteService.checkVoteOfSession(
                         this.entranceService.getAllEntrances(pageable)),
@@ -74,7 +76,7 @@ public class EntranceController {
 
     @GetMapping("/{id}/comments")
     public ResponseEntity<?> getCommentsByEntranceId(@PathVariable Long id,
-            @PageableDefault(page = 0, size = 5) Pageable pageable) {
+            @PageableDefault(page = 0, size = 5, sort = { "id" }, direction = Sort.Direction.DESC) Pageable pageable) {
         try {
             return new ResponseEntity<Page<CommentEntity>>(
                     this.commentVoteService.checkVoteOfSession(
