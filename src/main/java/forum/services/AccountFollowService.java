@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import forum.combinedIds.AccountFollowId;
 import forum.entities.AccountEntity;
 import forum.entities.AccountFollowEntity;
+import forum.entities.CommunityListEntity;
 import forum.exceptions.AccountFollowAlreadyExistsException;
 import forum.exceptions.AccountFollowNotFoundException;
 import forum.exceptions.AccountNotFoundException;
@@ -141,5 +142,10 @@ public class AccountFollowService {
     public Page<AccountEntity> checkFollowOfSession(Page<AccountEntity> accounts) {
         accounts.forEach(account -> this.checkFollowOfSession(account));
         return accounts;
+    }
+
+    public Page<CommunityListEntity> checkAccountsFollowOfSession(Page<CommunityListEntity> communitiesList) {
+        communitiesList.forEach((communityList) -> this.checkFollowOfSession(communityList.getAccount()));
+        return communitiesList;
     }
 }

@@ -123,7 +123,8 @@ public class AccountController {
 
         try {
             return new ResponseEntity<Page<CommunityListEntity>>(
-                    this.communityListService.getCommunitiesByUserId(id, pageable),
+                    this.communityListService.checkCommunitiesFollowOfSession(
+                            this.communityListService.getCommunitiesByUserId(id, pageable)),
                     HttpStatus.OK);
         } catch (ApiException e) {
             return new ResponseEntity<ApiResponse>(

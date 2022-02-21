@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import forum.beans.CommunityBean;
 import forum.beans.EntranceBean;
 import forum.entities.CommunityEntity;
+import forum.entities.CommunityListEntity;
 import forum.entities.EntranceEntity;
 import forum.exceptions.AccountNotFoundException;
+import forum.exceptions.ApiException;
 import forum.exceptions.CommunityAlreadyExistsException;
 import forum.exceptions.CommunityAlreadyFollowedException;
 import forum.exceptions.CommunityNotFollowedException;
@@ -29,6 +31,7 @@ import forum.exceptions.IlegalEntranceArgumentsException;
 import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
 import forum.helpers.ApiResponse;
+import forum.services.AccountFollowService;
 import forum.services.CommunityListService;
 import forum.services.CommunityService;
 import forum.services.EntranceService;
@@ -50,11 +53,30 @@ public class CommunityController {
     @Autowired
     EntranceVoteService entranceVoteService;
 
+    @Autowired
+    AccountFollowService accountFollowService;
+
     @GetMapping
     public ResponseEntity<?> getCommunities(@PageableDefault(page = 0, size = 5) Pageable pageable) {
         return new ResponseEntity<Page<CommunityEntity>>(
                 this.communityService.getAllCommunities(pageable),
                 HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/followers")
+    public ResponseEntity<?> getAccountsByCommunityId(@PathVariable Long id,
+            @PageableDefault(page = 0, size = 5) Pageable pageable) {
+
+        try {
+            return new ResponseEntity<Page<CommunityListEntity>>(
+                    this.accountFollowService.checkAccountsFollowOfSession(
+                            this.communityListService.getAccountsByCommunityId(id, pageable)),
+                    HttpStatus.OK);
+        } catch (ApiException e) {
+            return new ResponseEntity<ApiResponse>(
+                    e.getApiResponse(),
+                    e.getApiResponse().getStatus());
+        }
     }
 
     @GetMapping("/search/{name}")

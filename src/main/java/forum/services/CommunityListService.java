@@ -39,6 +39,15 @@ public class CommunityListService {
     @Autowired
     EntranceRepository entranceRepository;
 
+    public Page<CommunityListEntity> getAccountsByCommunityId(Long id, Pageable pageable)
+            throws CommunityNotFoundException {
+
+        return this.communityListRepository
+                .findByCommunityListIdCommunityEntity(
+                        this.communityRepository.findById(id).orElseThrow(() -> new CommunityNotFoundException()),
+                        pageable);
+    }
+
     public Page<CommunityListEntity> getCommunitiesByUserId(Long id, Pageable pageable)
             throws AccountNotFoundException {
 
@@ -113,8 +122,13 @@ public class CommunityListService {
         return communityEntity;
     }
 
-    public Page<CommunityEntity> checkVoteOfSession(Page<CommunityEntity> communities) {
+    public Page<CommunityEntity> checkFollowOfSession(Page<CommunityEntity> communities) {
         communities.forEach(community -> this.checkFollowOfSession(community));
         return communities;
+    }
+
+    public Page<CommunityListEntity> checkCommunitiesFollowOfSession(Page<CommunityListEntity> communitiesList) {
+        communitiesList.forEach((communityList) -> this.checkFollowOfSession(communityList.getCommunity()));
+        return communitiesList;
     }
 }
