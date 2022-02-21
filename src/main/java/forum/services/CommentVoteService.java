@@ -1,5 +1,7 @@
 package forum.services;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -27,44 +29,31 @@ public class CommentVoteService {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Transactional
     public void createVote(Long id, boolean vote)
             throws CommentNotFoundException, AccountNotFoundException, InvalidSessionException,
             CommentVoteAlreadyExistsException {
-        if (!this.commentRepository.existsById(id)) {
-            throw new CommentNotFoundException();
-        }
 
         CommentVoteId commentVoteId = new CommentVoteId(
                 this.sessionService.getUser(),
-                this.commentRepository.findById(id).get());
+                this.commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException()));
 
         if (this.commentVoteRepository.existsById(commentVoteId)) {
-            throw new CommentVoteAlreadyExistsException();
+            CommentVoteEntity commentVoteEntity = this.commentVoteRepository.findById(commentVoteId).get();
+
+            if (commentVoteEntity.getVote() == vote) {
+                this.commentVoteRepository.deleteById(commentVoteId);
+            } else {
+                commentVoteEntity.setVote(vote);
+                this.commentVoteRepository.save(commentVoteEntity);
+            }
+        } else {
+            CommentVoteEntity commentVoteEntity = new CommentVoteEntity();
+            commentVoteEntity.setCommentVoteId(commentVoteId);
+            commentVoteEntity.setVote(vote);
+
+            this.commentVoteRepository.save(commentVoteEntity);
         }
-
-        CommentVoteEntity commentVoteEntity = new CommentVoteEntity();
-        commentVoteEntity.setCommentVoteId(commentVoteId);
-        commentVoteEntity.setVote(vote);
-
-        this.commentVoteRepository.save(commentVoteEntity);
-    }
-
-    public void deleteVote(Long id)
-            throws CommentNotFoundException, AccountNotFoundException, InvalidSessionException,
-            CommentVoteNotFoundException {
-        if (!this.commentRepository.existsById(id)) {
-            throw new CommentNotFoundException();
-        }
-
-        CommentVoteId commentVoteId = new CommentVoteId(
-                this.sessionService.getUser(),
-                this.commentRepository.findById(id).get());
-
-        if (!this.commentVoteRepository.existsById(commentVoteId)) {
-            throw new CommentVoteNotFoundException();
-        }
-
-        this.commentVoteRepository.deleteById(commentVoteId);
     }
 
     public CommentEntity checkVoteOfSession(CommentEntity commentEntity) {

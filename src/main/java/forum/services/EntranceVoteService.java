@@ -1,5 +1,7 @@
 package forum.services;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -28,47 +30,31 @@ public class EntranceVoteService {
     @Autowired
     private EntranceRepository entranceRepository;
 
-    @Autowired
-    private AccountRepository accountRepository;
-
+    @Transactional
     public void createVote(Long id, boolean vote)
             throws EntranceNotFoundException, AccountNotFoundException, InvalidSessionException,
             EntranceVoteAlreadyExistsException {
-        if (!this.entranceRepository.existsById(id)) {
-            throw new EntranceNotFoundException();
-        }
 
         EntranceVoteId entranceVoteId = new EntranceVoteId(
                 this.sessionService.getUser(),
-                this.entranceRepository.findById(id).get());
+                this.entranceRepository.findById(id).orElseThrow(() -> new EntranceNotFoundException()));
 
         if (this.entranceVoteRepository.existsById(entranceVoteId)) {
-            throw new EntranceVoteAlreadyExistsException();
+            EntranceVoteEntity entranceVoteEntity = this.entranceVoteRepository.findById(entranceVoteId).get();
+
+            if (entranceVoteEntity.getVote() == vote) {
+                this.entranceVoteRepository.deleteById(entranceVoteId);
+            } else {
+                entranceVoteEntity.setVote(vote);
+                this.entranceVoteRepository.save(entranceVoteEntity);
+            }
+        } else {
+            EntranceVoteEntity entranceVoteEntity = new EntranceVoteEntity();
+            entranceVoteEntity.setEntranceVoteId(entranceVoteId);
+            entranceVoteEntity.setVote(vote);
+
+            this.entranceVoteRepository.save(entranceVoteEntity);
         }
-
-        EntranceVoteEntity entranceVoteEntity = new EntranceVoteEntity();
-        entranceVoteEntity.setEntranceVoteId(entranceVoteId);
-        entranceVoteEntity.setVote(vote);
-
-        this.entranceVoteRepository.save(entranceVoteEntity);
-    }
-
-    public void deleteVote(Long id)
-            throws EntranceNotFoundException, AccountNotFoundException, InvalidSessionException,
-            EntranceVoteNotFoundException {
-        if (!this.entranceRepository.existsById(id)) {
-            throw new EntranceNotFoundException();
-        }
-
-        EntranceVoteId entranceVoteId = new EntranceVoteId(
-                this.sessionService.getUser(),
-                this.entranceRepository.findById(id).get());
-
-        if (!this.entranceVoteRepository.existsById(entranceVoteId)) {
-            throw new EntranceVoteNotFoundException();
-        }
-
-        this.entranceVoteRepository.deleteById(entranceVoteId);
     }
 
     public EntranceEntity checkVoteOfSession(EntranceEntity entranceEntity) {

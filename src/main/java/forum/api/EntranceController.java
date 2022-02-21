@@ -149,19 +149,4 @@ public class EntranceController {
 
         return new ResponseEntity<ApiResponse>(response, response.getStatus());
     }
-
-    @DeleteMapping("/{id}/vote")
-    public ResponseEntity<?> deleteVote(@PathVariable Long id) {
-        ApiResponse response;
-
-        try {
-            this.entranceVoteService.deleteVote(id);
-            response = new ApiResponse("entrance vote has been deleted", HttpStatus.OK);
-        } catch (EntranceNotFoundException | InvalidSessionException | AccountNotFoundException
-                | EntranceVoteNotFoundException e) {
-            response = e.getApiResponse();
-        }
-
-        return new ResponseEntity<ApiResponse>(response, response.getStatus());
-    }
 }
