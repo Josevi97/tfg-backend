@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import forum.beans.AccountBean;
 import forum.beans.AccountUpdateBean;
+import forum.beans.ResetPasswordBean;
 import forum.entities.AccountEntity;
 import forum.exceptions.AccountAlreadyExistsException;
 import forum.exceptions.AccountNotFoundException;
@@ -41,6 +42,7 @@ public class AccountService {
     public void createAccount(AccountBean accountBean)
             throws IlegalAccountArgumentsException, AccountAlreadyExistsException, InvalidSessionException,
             AccountNotFoundException, InsufficientPrivilegesException {
+
         if (accountBean == null || !accountBean.isValid()) {
             throw new IlegalAccountArgumentsException();
         }
@@ -69,12 +71,9 @@ public class AccountService {
             throws IlegalAccountArgumentsException, InvalidSessionException, AccountNotFoundException,
             AccountAlreadyExistsException,
             InsufficientPrivilegesException {
+
         if (accountBean == null || !accountBean.isValid()) {
             throw new IlegalAccountArgumentsException();
-        }
-
-        if (!this.accountRepository.existsById(id)) {
-            throw new AccountNotFoundException();
         }
 
         if (this.accountRepository.existsByLogin(accountBean.getLogin()) &&
@@ -95,7 +94,8 @@ public class AccountService {
             throw new InsufficientPrivilegesException();
         }
 
-        AccountEntity accountEntity = this.accountRepository.findById(id).get();
+        AccountEntity accountEntity = this.accountRepository.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException());
         accountEntity.setLogin(accountBean.getLogin());
         accountEntity.setEmail(accountBean.getEmail());
         accountEntity.setDescription(accountBean.getDescription());
@@ -106,8 +106,28 @@ public class AccountService {
         this.accountRepository.save(accountEntity);
     }
 
+    public void resetPassword(Long id, ResetPasswordBean resetPasswordBean)
+            throws IlegalAccountArgumentsException, InvalidSessionException, InsufficientPrivilegesException,
+            AccountNotFoundException {
+
+        if (resetPasswordBean == null || !resetPasswordBean.isValid()) {
+            throw new IlegalAccountArgumentsException();
+        }
+
+        if (!this.sessionService.isAdmin() && !this.sessionService.itsMe(id)) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        AccountEntity accountEntity = this.accountRepository.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException());
+        accountEntity.setPassword(resetPasswordBean.getPassword());
+
+        this.accountRepository.save(accountEntity);
+    }
+
     public void deleteAccount(Long id)
             throws InvalidSessionException, AccountNotFoundException, InsufficientPrivilegesException {
+
         if (!this.accountRepository.existsById(id)) {
             throw new AccountNotFoundException();
         }

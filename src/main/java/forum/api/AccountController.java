@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import forum.beans.AccountBean;
 import forum.beans.AccountUpdateBean;
+import forum.beans.ResetPasswordBean;
 import forum.entities.AccountEntity;
 import forum.entities.AccountFollowEntity;
 import forum.entities.CommentEntity;
@@ -26,6 +27,7 @@ import forum.exceptions.AccountAlreadyExistsException;
 import forum.exceptions.AccountFollowAlreadyExistsException;
 import forum.exceptions.AccountFollowNotFoundException;
 import forum.exceptions.AccountNotFoundException;
+import forum.exceptions.ApiException;
 import forum.exceptions.IlegalAccountArgumentsException;
 import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
@@ -79,7 +81,7 @@ public class AccountController {
                             this.entranceService.getEntrancesByCommunities(
                                     this.communityListService.getCommunitiesBySession(), pageable)),
                     HttpStatus.OK);
-        } catch (InvalidSessionException | AccountNotFoundException e) {
+        } catch (ApiException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
@@ -94,7 +96,7 @@ public class AccountController {
                             this.entranceService.getEntrancesByAccounts(
                                     this.accountFollowService.getFollowingBySession(), pageable)),
                     HttpStatus.OK);
-        } catch (InvalidSessionException | AccountNotFoundException e) {
+        } catch (ApiException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
@@ -108,7 +110,7 @@ public class AccountController {
                     this.accountFollowService.checkFollowOfSession(
                             this.accountService.getAccount(id)),
                     HttpStatus.OK);
-        } catch (AccountNotFoundException e) {
+        } catch (ApiException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
@@ -118,11 +120,12 @@ public class AccountController {
     @GetMapping("/{id}/communities")
     public ResponseEntity<?> getCommunities(@PathVariable Long id,
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
+
         try {
             return new ResponseEntity<Page<CommunityListEntity>>(
                     this.communityListService.getCommunitiesByUserId(id, pageable),
                     HttpStatus.OK);
-        } catch (AccountNotFoundException e) {
+        } catch (ApiException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
@@ -132,12 +135,13 @@ public class AccountController {
     @GetMapping("/{id}/entrances")
     public ResponseEntity<?> getEntrancesByAccountId(@PathVariable Long id,
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
+
         try {
             return new ResponseEntity<Page<EntranceEntity>>(
                     this.entranceVoteService.checkVoteOfSession(
                             this.entranceService.getEntrancesByAccountId(id, pageable)),
                     HttpStatus.OK);
-        } catch (AccountNotFoundException e) {
+        } catch (ApiException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
@@ -147,12 +151,13 @@ public class AccountController {
     @GetMapping("/{id}/comments")
     public ResponseEntity<?> getCommentsByAccountId(@PathVariable Long id,
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
+
         try {
             return new ResponseEntity<Page<CommentEntity>>(
                     this.commentVoteService.checkVoteOfSession(
                             this.commentService.getCommentsByAccountId(id, pageable)),
                     HttpStatus.OK);
-        } catch (AccountNotFoundException e) {
+        } catch (ApiException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
@@ -162,12 +167,13 @@ public class AccountController {
     @GetMapping("/{id}/following")
     public ResponseEntity<?> getFollowingByAccountId(@PathVariable Long id,
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
+
         try {
             return new ResponseEntity<Page<AccountFollowEntity>>(
                     this.accountFollowService.checkFollowOfSessionToFollows(
                             this.accountFollowService.getFollowingByAccountId(id, pageable)),
                     HttpStatus.OK);
-        } catch (AccountNotFoundException e) {
+        } catch (ApiException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
@@ -177,12 +183,13 @@ public class AccountController {
     @GetMapping("/{id}/followers")
     public ResponseEntity<?> getFollowersByAccountId(@PathVariable Long id,
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
+
         try {
             return new ResponseEntity<Page<AccountFollowEntity>>(
                     this.accountFollowService.checkFollowOfSessionToFollows(
                             this.accountFollowService.getFollowersByAccountId(id, pageable)),
                     HttpStatus.OK);
-        } catch (AccountNotFoundException e) {
+        } catch (ApiException e) {
             return new ResponseEntity<ApiResponse>(
                     e.getApiResponse(),
                     e.getApiResponse().getStatus());
@@ -196,8 +203,7 @@ public class AccountController {
         try {
             this.accountService.createAccount(accountBean);
             response = new ApiResponse("account has been created", HttpStatus.OK);
-        } catch (IlegalAccountArgumentsException | AccountAlreadyExistsException | InvalidSessionException
-                | InsufficientPrivilegesException | AccountNotFoundException e) {
+        } catch (ApiException e) {
             response = e.getApiResponse();
         }
 
@@ -211,8 +217,7 @@ public class AccountController {
         try {
             this.accountFollowService.createFollow(id);
             response = new ApiResponse("follow has been created", HttpStatus.OK);
-        } catch (AccountNotFoundException | InvalidSessionException | SelfAccountFollowAttemptException
-                | AccountFollowAlreadyExistsException e) {
+        } catch (ApiException e) {
             response = e.getApiResponse();
         }
 
@@ -226,7 +231,7 @@ public class AccountController {
         try {
             this.accountFollowService.deleteFollow(id);
             response = new ApiResponse("follow has been deleted", HttpStatus.OK);
-        } catch (AccountNotFoundException | InvalidSessionException | AccountFollowNotFoundException e) {
+        } catch (ApiException e) {
             response = e.getApiResponse();
         }
 
@@ -240,8 +245,21 @@ public class AccountController {
         try {
             this.accountService.updateAccount(id, accountBean);
             response = new ApiResponse("account has been updated", HttpStatus.OK);
-        } catch (IlegalAccountArgumentsException | InvalidSessionException | AccountNotFoundException
-                | AccountAlreadyExistsException | InsufficientPrivilegesException e) {
+        } catch (ApiException e) {
+            response = e.getApiResponse();
+        }
+
+        return new ResponseEntity<ApiResponse>(response, response.getStatus());
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<?> resetPassword(@PathVariable Long id, @RequestBody ResetPasswordBean resetPasswordBean) {
+        ApiResponse response;
+
+        try {
+            this.accountService.resetPassword(id, resetPasswordBean);
+            response = new ApiResponse("account password has been reseted", HttpStatus.OK);
+        } catch (ApiException e) {
             response = e.getApiResponse();
         }
 
@@ -255,7 +273,7 @@ public class AccountController {
         try {
             this.accountService.deleteAccount(id);
             response = new ApiResponse("account has been deleted", HttpStatus.OK);
-        } catch (InvalidSessionException | InsufficientPrivilegesException | AccountNotFoundException e) {
+        } catch (ApiException e) {
             response = e.getApiResponse();
         }
 
