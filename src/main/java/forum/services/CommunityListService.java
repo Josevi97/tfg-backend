@@ -42,13 +42,9 @@ public class CommunityListService {
     public Page<CommunityListEntity> getCommunitiesByUserId(Long id, Pageable pageable)
             throws AccountNotFoundException {
 
-        if (!this.accountRepository.existsById(id)) {
-            throw new AccountNotFoundException();
-        }
-
         return this.communityListRepository
                 .findByCommunityListIdAccountEntity(
-                        this.accountRepository.findById(id).get(),
+                        this.accountRepository.findById(id).orElseThrow(() -> new AccountNotFoundException()),
                         pageable);
     }
 
