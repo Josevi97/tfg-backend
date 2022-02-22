@@ -63,6 +63,14 @@ public class CommunityController {
                 HttpStatus.OK);
     }
 
+    @GetMapping("/random")
+    public ResponseEntity<?> getRandomCommunities(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+        return new ResponseEntity<Page<CommunityEntity>>(
+                this.communityListService.checkFollowOfSession(
+                        this.communityService.getRandomCommunities(pageable)),
+                HttpStatus.OK);
+    }
+
     @GetMapping("/{id}/followers")
     public ResponseEntity<?> getAccountsByCommunityId(@PathVariable Long id,
             @PageableDefault(page = 0, size = 5) Pageable pageable) {

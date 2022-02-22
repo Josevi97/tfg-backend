@@ -31,6 +31,10 @@ public class AccountService {
         return this.accountRepository.findAll(pageable);
     }
 
+    public Page<AccountEntity> getRandomAccounts(Pageable pageable) {
+        return this.accountRepository.random(pageable);
+    }
+
     public AccountEntity getAccount(Long id) throws AccountNotFoundException {
         if (!this.accountRepository.existsById(id)) {
             throw new AccountNotFoundException();

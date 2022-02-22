@@ -30,6 +30,10 @@ public class CommunityService {
         return this.communityRepository.findAll(pageable);
     }
 
+    public Page<CommunityEntity> getRandomCommunities(Pageable pageable) {
+        return this.communityRepository.random(pageable);
+    }
+
     public Page<CommunityEntity> getCommunitiesLikeName(String title, Pageable pageable) {
         return this.communityRepository.findByNameContaining(title, pageable);
     }

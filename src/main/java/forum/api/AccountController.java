@@ -69,7 +69,16 @@ public class AccountController {
     @GetMapping
     public ResponseEntity<?> getAccounts(@PageableDefault(page = 0, size = 5) Pageable pageable) {
         return new ResponseEntity<Page<AccountEntity>>(
-                this.accountService.getAllAccounts(pageable),
+                this.accountFollowService.checkFollowOfSession(
+                        this.accountService.getAllAccounts(pageable)),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/random")
+    public ResponseEntity<?> getRandomAccounts(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+        return new ResponseEntity<Page<AccountEntity>>(
+                this.accountFollowService.checkFollowOfSession(
+                        this.accountService.getRandomAccounts(pageable)),
                 HttpStatus.OK);
     }
 
