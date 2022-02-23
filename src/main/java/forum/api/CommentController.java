@@ -112,19 +112,4 @@ public class CommentController {
 
         return new ResponseEntity<ApiResponse>(response, response.getStatus());
     }
-
-    @DeleteMapping("/{id}/vote")
-    public ResponseEntity<?> deleteVote(@PathVariable Long id) {
-        ApiResponse response;
-
-        try {
-            this.commentVoteService.deleteVote(id);
-            response = new ApiResponse("comment vote has been deleted", HttpStatus.OK);
-        } catch (CommentNotFoundException | InvalidSessionException | AccountNotFoundException
-                | CommentVoteNotFoundException e) {
-            response = e.getApiResponse();
-        }
-
-        return new ResponseEntity<ApiResponse>(response, response.getStatus());
-    }
 }
