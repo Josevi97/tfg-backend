@@ -40,6 +40,16 @@ public class EntranceService {
     AccountRepository accountRepository;
 
     public Page<EntranceEntity> getAllEntrances(Pageable pageable) {
+        String sortBy = pageable.getSort().toString().split(": ")[0];
+
+        if (sortBy.equals("comments")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Direction.DESC, "id");
+            return this.entranceRepository.orderByComments(pageable);
+        } else if (sortBy.equals("votes")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Direction.DESC, "id");
+            return this.entranceRepository.orderByVotes(pageable);
+        }
+
         return this.entranceRepository.findAll(pageable);
     }
 
@@ -49,6 +59,16 @@ public class EntranceService {
             throw new CommunityNotFoundException();
         }
 
+        String sortBy = pageable.getSort().toString().split(": ")[0];
+
+        if (sortBy.equals("comments")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Direction.DESC, "id");
+            return this.entranceRepository.findByCommunityOrderByComments(id, pageable);
+        } else if (sortBy.equals("votes")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Direction.DESC, "id");
+            return this.entranceRepository.findByCommunityOrderByVotes(id, pageable);
+        }
+
         return this.entranceRepository.findByCommunityId(id, pageable);
     }
 
@@ -56,6 +76,16 @@ public class EntranceService {
             throws AccountNotFoundException {
         if (!this.accountRepository.existsById(id)) {
             throw new AccountNotFoundException();
+        }
+
+        String sortBy = pageable.getSort().toString().split(": ")[0];
+
+        if (sortBy.equals("comments")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Direction.DESC, "id");
+            return this.entranceRepository.findByAccountOrderByComments(id, pageable);
+        } else if (sortBy.equals("votes")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Direction.DESC, "id");
+            return this.entranceRepository.findByAccountOrderByVotes(id, pageable);
         }
 
         return this.entranceRepository.findByAccountId(id, pageable);
@@ -70,10 +100,30 @@ public class EntranceService {
     }
 
     public Page<EntranceEntity> getEntrancesByCommunities(List<CommunityEntity> communities, Pageable pageable) {
+        String sortBy = pageable.getSort().toString().split(": ")[0];
+
+        if (sortBy.equals("comments")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Direction.DESC, "id");
+            return this.entranceRepository.findByCommunitiesOrderByComments(communities, pageable);
+        } else if (sortBy.equals("votes")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Direction.DESC, "id");
+            return this.entranceRepository.findByCommunitiesOrderByVotes(communities, pageable);
+        }
+
         return this.entranceRepository.findByCommunityIn(communities, pageable);
     }
 
     public Page<EntranceEntity> getEntrancesByAccounts(List<AccountEntity> accounts, Pageable pageable) {
+        String sortBy = pageable.getSort().toString().split(": ")[0];
+
+        if (sortBy.equals("comments")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Direction.DESC, "id");
+            return this.entranceRepository.findByFollowingOrderByComments(accounts, pageable);
+        } else if (sortBy.equals("votes")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Direction.DESC, "id");
+            return this.entranceRepository.findByFollowingOrderByVotes(accounts, pageable);
+        }
+
         return this.entranceRepository.findByAccountIn(accounts, pageable);
     }
 

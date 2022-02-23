@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import forum.beans.CommentBean;
@@ -37,6 +39,16 @@ public class CommentService {
     public Page<CommentEntity> getCommentsByAccountId(Long id, Pageable pageable) throws AccountNotFoundException {
         if (!this.accountRepository.existsById(id)) {
             throw new AccountNotFoundException();
+        }
+
+        String sortBy = pageable.getSort().toString().split(": ")[0];
+
+        if (sortBy.equals("comments")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Direction.DESC, "id");
+            return this.commentRepository.findByAccountOrderByComments(id, pageable);
+        } else if (sortBy.equals("votes")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Direction.DESC, "id");
+            return this.commentRepository.findByAccountOrderByVotes(id, pageable);
         }
 
         return this.commentRepository.findByAccountId(this.accountRepository.findById(id).get().getId(), pageable);
