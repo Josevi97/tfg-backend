@@ -1,6 +1,8 @@
 package forum.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -31,8 +33,13 @@ public class AccountService {
         return this.accountRepository.findAll(pageable);
     }
 
-    public Page<AccountEntity> getRandomAccounts(Pageable pageable) {
-        return this.accountRepository.random(pageable);
+    public Page<AccountEntity> getRandomAccounts(List<Long> blackList, Pageable pageable) {
+        if (blackList == null) {
+            blackList = new ArrayList<Long>();
+            blackList.add(0L);
+        }
+
+        return this.accountRepository.random(blackList, pageable);
     }
 
     public AccountEntity getAccount(Long id) throws AccountNotFoundException {

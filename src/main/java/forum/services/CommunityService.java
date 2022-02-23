@@ -1,6 +1,8 @@
 package forum.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,8 +32,13 @@ public class CommunityService {
         return this.communityRepository.findAll(pageable);
     }
 
-    public Page<CommunityEntity> getRandomCommunities(Pageable pageable) {
-        return this.communityRepository.random(pageable);
+    public Page<CommunityEntity> getRandomCommunities(List<Long> blackList, Pageable pageable) {
+        if (blackList == null) {
+            blackList = new ArrayList<Long>();
+            blackList.add(0L);
+        }
+
+        return this.communityRepository.random(blackList, pageable);
     }
 
     public Page<CommunityEntity> getCommunitiesLikeName(String title, Pageable pageable) {

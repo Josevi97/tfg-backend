@@ -1,5 +1,7 @@
 package forum.api;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import forum.beans.CommunityBean;
@@ -64,10 +67,12 @@ public class CommunityController {
     }
 
     @GetMapping("/random")
-    public ResponseEntity<?> getRandomCommunities(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+    public ResponseEntity<?> getRandomCommunities(
+            @RequestParam(required = false) @PageableDefault(page = 0, size = 5) List<Long> blackList,
+            Pageable pageable) {
         return new ResponseEntity<Page<CommunityEntity>>(
                 this.communityListService.checkFollowOfSession(
-                        this.communityService.getRandomCommunities(pageable)),
+                        this.communityService.getRandomCommunities(blackList, pageable)),
                 HttpStatus.OK);
     }
 

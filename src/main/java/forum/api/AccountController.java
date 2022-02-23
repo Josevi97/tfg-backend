@@ -1,5 +1,7 @@
 package forum.api;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import forum.beans.AccountBean;
@@ -75,10 +78,12 @@ public class AccountController {
     }
 
     @GetMapping("/random")
-    public ResponseEntity<?> getRandomAccounts(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+    public ResponseEntity<?> getRandomAccounts(@RequestParam(required = false) List<Long> blackList,
+            @PageableDefault(page = 0, size = 5) Pageable pageable) {
+
         return new ResponseEntity<Page<AccountEntity>>(
                 this.accountFollowService.checkFollowOfSession(
-                        this.accountService.getRandomAccounts(pageable)),
+                        this.accountService.getRandomAccounts(blackList, pageable)),
                 HttpStatus.OK);
     }
 
