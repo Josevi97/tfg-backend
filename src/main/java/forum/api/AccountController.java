@@ -26,15 +26,7 @@ import forum.entities.AccountFollowEntity;
 import forum.entities.CommentEntity;
 import forum.entities.CommunityListEntity;
 import forum.entities.EntranceEntity;
-import forum.exceptions.AccountAlreadyExistsException;
-import forum.exceptions.AccountFollowAlreadyExistsException;
-import forum.exceptions.AccountFollowNotFoundException;
-import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.ApiException;
-import forum.exceptions.IlegalAccountArgumentsException;
-import forum.exceptions.InsufficientPrivilegesException;
-import forum.exceptions.InvalidSessionException;
-import forum.exceptions.SelfAccountFollowAttemptException;
 import forum.helpers.ApiResponse;
 import forum.services.AccountFollowService;
 import forum.services.AccountService;
@@ -84,6 +76,15 @@ public class AccountController {
         return new ResponseEntity<Page<AccountEntity>>(
                 this.accountFollowService.checkFollowOfSession(
                         this.accountService.getRandomAccounts(blackList, pageable)),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/search/{login}")
+    public ResponseEntity<?> getAccountsByLogin(@PathVariable String login,
+            @PageableDefault(page = 0, size = 5) Pageable pageable) {
+        return new ResponseEntity<Page<AccountEntity>>(
+                this.accountFollowService.checkFollowOfSession(
+                        this.accountService.getAccountsLikeLogin(login, pageable)),
                 HttpStatus.OK);
     }
 

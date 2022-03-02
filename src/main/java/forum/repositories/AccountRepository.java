@@ -24,4 +24,6 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
     boolean existsByLogin(String login);
 
     boolean existsByEmail(String email);
+
+    public Page<AccountEntity> findByLoginContaining(String login, Pageable pageable);
 }

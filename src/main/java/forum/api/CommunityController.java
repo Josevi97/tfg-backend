@@ -96,7 +96,8 @@ public class CommunityController {
     public ResponseEntity<?> getCommunitiesByName(@PathVariable String name,
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         return new ResponseEntity<Page<CommunityEntity>>(
-                this.communityService.getCommunitiesLikeName(name, pageable),
+                this.communityListService.checkFollowOfSession(
+                        this.communityService.getCommunitiesLikeName(name, pageable)),
                 HttpStatus.OK);
     }
 

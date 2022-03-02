@@ -33,6 +33,10 @@ public class AccountService {
         return this.accountRepository.findAll(pageable);
     }
 
+    public Page<AccountEntity> getAccountsLikeLogin(String login, Pageable pageable) {
+        return this.accountRepository.findByLoginContaining(login, pageable);
+    }
+
     public Page<AccountEntity> getRandomAccounts(List<Long> blackList, Pageable pageable) {
         if (blackList == null) {
             blackList = new ArrayList<Long>();
