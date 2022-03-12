@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import forum.beans.AccountBean;
 import forum.beans.AccountUpdateBean;
@@ -255,11 +257,13 @@ public class AccountController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountUpdateBean accountBean) {
+    public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestPart(required = false) MultipartFile file,
+            @RequestPart AccountUpdateBean accountBean) {
+
         ApiResponse response;
 
         try {
-            this.accountService.updateAccount(id, accountBean);
+            this.accountService.updateAccount(id, accountBean, file);
             response = new ApiResponse("account has been updated", HttpStatus.OK);
         } catch (ApiException e) {
             response = e.getApiResponse();

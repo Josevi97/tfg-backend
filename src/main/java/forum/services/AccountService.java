@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import forum.beans.AccountBean;
 import forum.beans.AccountUpdateBean;
@@ -28,6 +29,9 @@ public class AccountService {
 
     @Autowired
     AccountRepository accountRepository;
+
+    @Autowired
+    FileService fileService;
 
     public Page<AccountEntity> getAllAccounts(Pageable pageable) {
         return this.accountRepository.findAll(pageable);
@@ -82,7 +86,7 @@ public class AccountService {
         this.accountRepository.save(accountEntity);
     }
 
-    public void updateAccount(Long id, AccountUpdateBean accountBean)
+    public void updateAccount(Long id, AccountUpdateBean accountBean, MultipartFile file)
             throws IlegalAccountArgumentsException, InvalidSessionException, AccountNotFoundException,
             AccountAlreadyExistsException,
             InsufficientPrivilegesException {
@@ -109,13 +113,16 @@ public class AccountService {
             throw new InsufficientPrivilegesException();
         }
 
+        String path = "assets/accounts/images/IMG_" + id + ".png";
+        String avatPath = this.fileService.getPathFixed(this.fileService.toFile(file, path));
+
         AccountEntity accountEntity = this.accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFoundException());
         accountEntity.setLogin(accountBean.getLogin());
         accountEntity.setEmail(accountBean.getEmail());
         accountEntity.setDescription(accountBean.getDescription());
         accountEntity.setUsername(accountBean.getUsername());
-        accountEntity.setAvatar(null);
+        accountEntity.setAvatar(avatPath);
         accountEntity.setAdmin(accountBean.isAdmin());
 
         this.accountRepository.save(accountEntity);
