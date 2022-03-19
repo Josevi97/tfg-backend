@@ -60,9 +60,10 @@ public class CommunityController {
     AccountFollowService accountFollowService;
 
     @GetMapping
-    public ResponseEntity<?> getCommunities(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+    public ResponseEntity<?> getCommunities(@PageableDefault(page = 0, size = 5) Pageable pageable,
+            @RequestParam(required = false) String filter) {
         return new ResponseEntity<Page<CommunityEntity>>(
-                this.communityService.getAllCommunities(pageable),
+                this.communityService.getAllCommunities(pageable, filter),
                 HttpStatus.OK);
     }
 

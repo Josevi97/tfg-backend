@@ -28,8 +28,12 @@ public class CommunityService {
     @Autowired
     CommunityRepository communityRepository;
 
-    public Page<CommunityEntity> getAllCommunities(Pageable pageable) {
-        return this.communityRepository.findAll(pageable);
+    public Page<CommunityEntity> getAllCommunities(Pageable pageable, String filter) {
+        if (filter == null) {
+            return this.communityRepository.findAll(pageable);
+        }
+
+        return this.communityRepository.filtered(filter, pageable);
     }
 
     public Page<CommunityEntity> getRandomCommunities(List<Long> blackList, Pageable pageable) {

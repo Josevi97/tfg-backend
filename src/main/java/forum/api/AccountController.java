@@ -64,10 +64,12 @@ public class AccountController {
     CommentVoteService commentVoteService;
 
     @GetMapping
-    public ResponseEntity<?> getAccounts(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+    public ResponseEntity<?> getAccounts(@PageableDefault(page = 0, size = 5) Pageable pageable,
+            @RequestParam(required = false) String filter) {
+
         return new ResponseEntity<Page<AccountEntity>>(
                 this.accountFollowService.checkFollowOfSession(
-                        this.accountService.getAllAccounts(pageable)),
+                        this.accountService.getAllAccounts(pageable, filter)),
                 HttpStatus.OK);
     }
 

@@ -33,8 +33,12 @@ public class AccountService {
     @Autowired
     FileService fileService;
 
-    public Page<AccountEntity> getAllAccounts(Pageable pageable) {
-        return this.accountRepository.findAll(pageable);
+    public Page<AccountEntity> getAllAccounts(Pageable pageable, String filter) {
+        if (filter == null) {
+            return this.accountRepository.findAll(pageable);
+        }
+
+        return this.accountRepository.filtered(filter, pageable);
     }
 
     public Page<AccountEntity> getAccountsLikeLogin(String login, Pageable pageable) {

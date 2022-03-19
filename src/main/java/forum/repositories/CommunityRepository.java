@@ -13,6 +13,9 @@ public interface CommunityRepository extends JpaRepository<CommunityEntity, Long
     @Query(value = "SELECT * FROM community WHERE id not in ?1 ORDER BY RAND(), RAND()", nativeQuery = true)
     Page<CommunityEntity> random(List<Long> blackList, Pageable pageable);
 
+    @Query(value = "SELECT * FROM community WHERE name like %?1%", nativeQuery = true)
+    public Page<CommunityEntity> filtered(String filter, Pageable pageable);
+
     public CommunityEntity findByName(String name);
 
     public boolean existsByName(String name);

@@ -13,7 +13,10 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
     @Query(value = "SELECT * FROM account WHERE id not in ?1 ORDER BY RAND(), RAND(), RAND()", nativeQuery = true)
     Page<AccountEntity> random(List<Long> blackList, Pageable pageable);
 
-    boolean existsByLoginAndPassword(String login, String password);
+    @Query(value = "SELECT * FROM account WHERE login like %?1% or email like %?1% or username like %?1%", nativeQuery = true)
+    public Page<AccountEntity> filtered(String filter, Pageable pageable);
+
+    public Page<AccountEntity> findByLoginContaining(String login, Pageable pageable);
 
     AccountEntity findByLoginAndPassword(String login, String password);
 
@@ -25,5 +28,5 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
 
     boolean existsByEmail(String email);
 
-    public Page<AccountEntity> findByLoginContaining(String login, Pageable pageable);
+    boolean existsByLoginAndPassword(String login, String password);
 }
