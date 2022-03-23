@@ -8,7 +8,7 @@ public class AccountHelper {
     }
 
     public static boolean isEmailValid(String email) {
-        return true;
+        return email.matches("^[a-zA-Z0-9\\-_.]{3,}@[a-zA-Z]{3,}\\.[a-zA-Z]{2,}$");
     }
 
     public static boolean isPasswordValid(String password) {
