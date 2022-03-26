@@ -10,6 +10,8 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import forum.constants.AccountConstants;
+
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.GeneratedValue;
@@ -25,19 +27,19 @@ public class AccountEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "login", unique = true, length = 255, nullable = false)
+    @Column(name = "login", unique = true, length = AccountConstants.MAX_LOGIN_SIZE, nullable = false)
     private String login;
 
-    @Column(name = "email", unique = true, length = 255, nullable = false)
+    @Column(name = "email", unique = true, length = AccountConstants.MAX_EMAIL_SIZE, nullable = false)
     private String email;
 
-    @Column(name = "password", length = 255, nullable = false)
+    @Column(name = "password", length = AccountConstants.MAX_PASSWORD_SIZE, nullable = false)
     private String password;
 
-    @Column(name = "username", length = 255, nullable = false)
+    @Column(name = "username", length = AccountConstants.MAX_USERNAME_SIZE, nullable = false)
     private String username;
 
-    @Column(name = "description", length = 255, nullable = true)
+    @Column(name = "description", length = AccountConstants.MAX_DESCRIPTION_SIZE, nullable = true)
     private String description;
 
     @Column(name = "avatar", length = 255, nullable = true)

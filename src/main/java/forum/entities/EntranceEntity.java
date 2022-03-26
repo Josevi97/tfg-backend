@@ -18,6 +18,8 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import forum.constants.EntranceConstants;
+
 @Entity
 @Table(name = "entrance")
 public class EntranceEntity {
@@ -26,10 +28,10 @@ public class EntranceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", length = 255, nullable = false)
+    @Column(name = "title", length = EntranceConstants.MAX_TITLE_SIZE, nullable = false)
     private String title;
 
-    @Column(name = "body", length = 255, nullable = false)
+    @Column(name = "body", length = EntranceConstants.MAX_BODY_SIZE, nullable = false)
     private String body;
 
     @Column(name = "created_at", nullable = false, updatable = false)

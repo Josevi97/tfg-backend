@@ -18,6 +18,8 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import forum.constants.CommentConstants;
+
 @Entity
 @Table(name = "comment")
 public class CommentEntity {
@@ -26,7 +28,7 @@ public class CommentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "body", length = 255, nullable = false, updatable = false)
+    @Column(name = "body", length = CommentConstants.MAX_BODY_SIZE, nullable = false, updatable = false)
     private String body;
 
     @Column(name = "created_at", nullable = false, updatable = false)

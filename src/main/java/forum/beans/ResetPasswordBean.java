@@ -22,10 +22,6 @@ public class ResetPasswordBean {
     }
 
     public boolean isValid() {
-        boolean bOpass = this.originalPassword != null
-                && AccountHelper.isPasswordValid(this.originalPassword);
-        boolean bEpass = this.originalPassword.equals(this.repeatedPassword);
-
-        return bOpass && bEpass;
+        return AccountHelper.isPasswordValid(this.originalPassword, this.repeatedPassword);
     }
 }

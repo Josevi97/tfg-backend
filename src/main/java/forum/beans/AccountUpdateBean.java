@@ -8,7 +8,6 @@ public class AccountUpdateBean {
     private String email;
     private String username;
     private String description;
-    // Falta la imagen
     private boolean isAdmin;
 
     public AccountUpdateBean() {
@@ -55,8 +54,8 @@ public class AccountUpdateBean {
     }
 
     public boolean isValid() {
-        return AccountHelper.isLoginValid(this.login) && AccountHelper.isEmailValid(this.email) &&
-                AccountHelper.isUsernameValid(this.username);
+        return AccountHelper.isLoginValid(this.login) && AccountHelper.isEmailValid(this.email)
+                && AccountHelper.isUsernameValid(this.username) && AccountHelper.isDescriptionValid(this.description);
     }
 
     public AccountEntity toEntity() {
@@ -65,8 +64,6 @@ public class AccountUpdateBean {
         accountEntity.setEmail(this.email);
         accountEntity.setUsername(this.username);
         accountEntity.setDescription(this.description);
-        // Falta la imagen que deberia ser un MultiCast o bien que sea el controlador el
-        // que dirija esta interaccion
         accountEntity.setAdmin(this.isAdmin);
 
         return accountEntity;

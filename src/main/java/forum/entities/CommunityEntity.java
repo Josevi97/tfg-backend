@@ -16,6 +16,8 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import forum.constants.CommunityConstants;
+
 @Entity
 @Table(name = "community")
 public class CommunityEntity {
@@ -24,10 +26,10 @@ public class CommunityEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", unique = true, length = 255, nullable = false)
+    @Column(name = "name", unique = true, length = CommunityConstants.MAX_NAME_SIZE, nullable = false)
     private String name;
 
-    @Column(name = "description", length = 255, nullable = true)
+    @Column(name = "description", length = CommunityConstants.MAX_DESCRIPTION_SIZE, nullable = true)
     private String description;
 
     @Column(name = "image", length = 255, nullable = true)
