@@ -1,5 +1,7 @@
 package forum.beans;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import forum.entities.AccountEntity;
 import forum.helpers.AccountHelper;
 
@@ -9,7 +11,6 @@ public class AccountBean {
     private String originalPassword;
     private String repeatedPassword;
     private String username;
-    // Falta la imagen
     private boolean isAdmin;
 
     public AccountBean() {
@@ -60,8 +61,8 @@ public class AccountBean {
     }
 
     public boolean isValid() {
-        return AccountHelper.isLoginValid(this.login) && AccountHelper.isEmailValid(this.email) &&
-                AccountHelper.isPasswordValid(this.originalPassword, this.repeatedPassword)
+        return AccountHelper.isLoginValid(this.login) && AccountHelper.isEmailValid(this.email)
+                && AccountHelper.isPasswordValid(this.originalPassword, this.repeatedPassword)
                 && AccountHelper.isUsernameValid(this.username);
     }
 
@@ -69,10 +70,8 @@ public class AccountBean {
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setLogin(this.login);
         accountEntity.setEmail(this.email);
-        accountEntity.setPassword(this.originalPassword);
+        accountEntity.setPassword(DigestUtils.sha256Hex(this.originalPassword));
         accountEntity.setUsername(this.username);
-        // Falta la imagen que deberia ser un MultiCast o bien que sea el controlador el
-        // que dirija esta interaccion
         accountEntity.setAdmin(this.isAdmin);
 
         return accountEntity;

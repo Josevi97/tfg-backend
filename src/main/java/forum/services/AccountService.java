@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -92,20 +93,19 @@ public class AccountService {
 
     public void updateAccount(Long id, AccountUpdateBean accountBean, MultipartFile file)
             throws IlegalAccountArgumentsException, InvalidSessionException, AccountNotFoundException,
-            AccountAlreadyExistsException,
-            InsufficientPrivilegesException {
+            AccountAlreadyExistsException, InsufficientPrivilegesException {
 
         if (accountBean == null || !accountBean.isValid()) {
             throw new IlegalAccountArgumentsException();
         }
 
-        if (this.accountRepository.existsByLogin(accountBean.getLogin()) &&
-                this.accountRepository.findByLogin(accountBean.getLogin()).getId() != id) {
+        if (this.accountRepository.existsByLogin(accountBean.getLogin())
+                && this.accountRepository.findByLogin(accountBean.getLogin()).getId() != id) {
             throw new AccountAlreadyExistsException("login is already in use");
         }
 
-        if (this.accountRepository.existsByEmail(accountBean.getEmail()) &&
-                this.accountRepository.findByEmail(accountBean.getEmail()).getId() != id) {
+        if (this.accountRepository.existsByEmail(accountBean.getEmail())
+                && this.accountRepository.findByEmail(accountBean.getEmail()).getId() != id) {
             throw new AccountAlreadyExistsException("email is already in use");
         }
 
@@ -132,9 +132,8 @@ public class AccountService {
         this.accountRepository.save(accountEntity);
     }
 
-    public void resetPassword(Long id, ResetPasswordBean resetPasswordBean)
-            throws IlegalAccountArgumentsException, InvalidSessionException, InsufficientPrivilegesException,
-            AccountNotFoundException {
+    public void resetPassword(Long id, ResetPasswordBean resetPasswordBean) throws IlegalAccountArgumentsException,
+            InvalidSessionException, InsufficientPrivilegesException, AccountNotFoundException {
 
         if (resetPasswordBean == null || !resetPasswordBean.isValid()) {
             throw new IlegalAccountArgumentsException();
@@ -146,7 +145,7 @@ public class AccountService {
 
         AccountEntity accountEntity = this.accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFoundException());
-        accountEntity.setPassword(resetPasswordBean.getPassword());
+        accountEntity.setPassword(DigestUtils.sha256Hex(resetPasswordBean.getPassword()));
 
         this.accountRepository.save(accountEntity);
     }

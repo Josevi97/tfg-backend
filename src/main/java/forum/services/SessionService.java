@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,13 +43,14 @@ public class SessionService {
             throw new IlegalLoginArgumentsException();
         }
 
-        if (!this.accountRepository.existsByLoginAndPassword(loginBean.getLogin(), loginBean.getPassword())) {
+        String encryptedPassword = DigestUtils.sha256Hex(loginBean.getPassword());
+
+        if (!this.accountRepository.existsByLoginAndPassword(loginBean.getLogin(), encryptedPassword)) {
             throw new AccountNotFoundException();
         }
 
-        AccountEntity accountEntity = this.accountRepository.findByLoginAndPassword(
-                loginBean.getLogin(),
-                loginBean.getPassword());
+        AccountEntity accountEntity = this.accountRepository.findByLoginAndPassword(loginBean.getLogin(),
+                encryptedPassword);
         accountEntity.setLastSessionAt(LocalDateTime.now());
 
         this.accountRepository.save(accountEntity);
