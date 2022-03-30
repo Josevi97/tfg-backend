@@ -72,8 +72,7 @@ public class EntranceService {
         return this.entranceRepository.findByCommunityId(id, pageable);
     }
 
-    public Page<EntranceEntity> getEntrancesByAccountId(Long id, Pageable pageable)
-            throws AccountNotFoundException {
+    public Page<EntranceEntity> getEntrancesByAccountId(Long id, Pageable pageable) throws AccountNotFoundException {
         if (!this.accountRepository.existsById(id)) {
             throw new AccountNotFoundException();
         }
@@ -127,9 +126,8 @@ public class EntranceService {
         return this.entranceRepository.findByAccountIn(accounts, pageable);
     }
 
-    public void createEntrance(Long id, EntranceBean entranceBean)
-            throws IlegalEntranceArgumentsException, CommunityNotFoundException, InvalidSessionException,
-            AccountNotFoundException {
+    public void createEntrance(Long id, EntranceBean entranceBean) throws IlegalEntranceArgumentsException,
+            CommunityNotFoundException, InvalidSessionException, AccountNotFoundException {
         if (entranceBean == null || !entranceBean.isValid()) {
             throw new IlegalEntranceArgumentsException();
         }
@@ -169,9 +167,8 @@ public class EntranceService {
         this.entranceRepository.save(entranceEntity);
     }
 
-    public void deleteEntrance(Long id)
-            throws EntranceNotFoundException, InvalidSessionException, AccountNotFoundException,
-            InsufficientPrivilegesException {
+    public void deleteEntrance(Long id) throws EntranceNotFoundException, InvalidSessionException,
+            AccountNotFoundException, InsufficientPrivilegesException {
         if (!this.entranceRepository.existsById(id)) {
             throw new EntranceNotFoundException();
         }
