@@ -117,8 +117,9 @@ public class AccountService {
             throw new InsufficientPrivilegesException();
         }
 
-        String path = "assets/accounts/images/IMG_" + id + ".png";
-        String avatPath = this.fileService.getPathFixed(this.fileService.toFile(file, path));
+        String avatar = String.format("IMG_ACC_%s", id);
+        String path = String.format("/var/www/tfgddbb/%s", avatar);
+        this.fileService.getPathFixed(this.fileService.toFile(file, path));
 
         AccountEntity accountEntity = this.accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFoundException());
@@ -126,7 +127,7 @@ public class AccountService {
         accountEntity.setEmail(accountBean.getEmail());
         accountEntity.setDescription(accountBean.getDescription());
         accountEntity.setUsername(accountBean.getUsername());
-        accountEntity.setAvatar(avatPath);
+        accountEntity.setAvatar(avatar);
         accountEntity.setAdmin(accountBean.isAdmin());
 
         this.accountRepository.save(accountEntity);
