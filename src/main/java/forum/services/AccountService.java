@@ -14,10 +14,12 @@ import org.springframework.web.multipart.MultipartFile;
 import forum.beans.AccountBean;
 import forum.beans.AccountUpdateBean;
 import forum.beans.ResetPasswordBean;
+import forum.constants.FileConstants;
 import forum.entities.AccountEntity;
 import forum.exceptions.AccountAlreadyExistsException;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.IlegalAccountArgumentsException;
+import forum.exceptions.IlegalFileExtensionException;
 import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
 import forum.repositories.AccountRepository;
@@ -91,9 +93,9 @@ public class AccountService {
         this.accountRepository.save(accountEntity);
     }
 
-    public void updateAccount(Long id, AccountUpdateBean accountBean, MultipartFile file)
+    public AccountEntity updateAccount(Long id, AccountUpdateBean accountBean, MultipartFile file)
             throws IlegalAccountArgumentsException, InvalidSessionException, AccountNotFoundException,
-            AccountAlreadyExistsException, InsufficientPrivilegesException {
+            AccountAlreadyExistsException, InsufficientPrivilegesException, IlegalFileExtensionException {
 
         if (accountBean == null || !accountBean.isValid()) {
             throw new IlegalAccountArgumentsException();
@@ -117,9 +119,8 @@ public class AccountService {
             throw new InsufficientPrivilegesException();
         }
 
-        String avatar = String.format("IMG_ACC_%s", id);
-        String path = String.format("/var/www/tfgddbb/%s", avatar);
-        this.fileService.getPathFixed(this.fileService.toFile(file, path));
+        String avatar = this.fileService.toImage(file, String.format(FileConstants.IMAGE_FILE_FORMAT, id),
+                accountBean.getChangeImage());
 
         AccountEntity accountEntity = this.accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFoundException());
@@ -130,7 +131,7 @@ public class AccountService {
         accountEntity.setAvatar(avatar);
         accountEntity.setAdmin(accountBean.isAdmin());
 
-        this.accountRepository.save(accountEntity);
+        return this.accountRepository.save(accountEntity);
     }
 
     public void resetPassword(Long id, ResetPasswordBean resetPasswordBean) throws IlegalAccountArgumentsException,
@@ -163,5 +164,6 @@ public class AccountService {
         }
 
         this.accountRepository.deleteById(id);
+        this.fileService.removeFile(String.format(FileConstants.IMAGE_FILE_FORMAT, id));
     }
 }

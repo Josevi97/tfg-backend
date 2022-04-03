@@ -68,8 +68,7 @@ public class AccountController {
             @RequestParam(required = false) String filter) {
 
         return new ResponseEntity<Page<AccountEntity>>(
-                this.accountFollowService.checkFollowOfSession(
-                        this.accountService.getAllAccounts(pageable, filter)),
+                this.accountFollowService.checkFollowOfSession(this.accountService.getAllAccounts(pageable, filter)),
                 HttpStatus.OK);
     }
 
@@ -77,33 +76,26 @@ public class AccountController {
     public ResponseEntity<?> getRandomAccounts(@RequestParam(required = false) List<Long> blackList,
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
 
-        return new ResponseEntity<Page<AccountEntity>>(
-                this.accountFollowService.checkFollowOfSession(
-                        this.accountService.getRandomAccounts(blackList, pageable)),
-                HttpStatus.OK);
+        return new ResponseEntity<Page<AccountEntity>>(this.accountFollowService
+                .checkFollowOfSession(this.accountService.getRandomAccounts(blackList, pageable)), HttpStatus.OK);
     }
 
     @GetMapping("/search/{login}")
     public ResponseEntity<?> getAccountsByLogin(@PathVariable String login,
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
-        return new ResponseEntity<Page<AccountEntity>>(
-                this.accountFollowService.checkFollowOfSession(
-                        this.accountService.getAccountsLikeLogin(login, pageable)),
-                HttpStatus.OK);
+        return new ResponseEntity<Page<AccountEntity>>(this.accountFollowService
+                .checkFollowOfSession(this.accountService.getAccountsLikeLogin(login, pageable)), HttpStatus.OK);
     }
 
     @GetMapping("/communities/entrances")
     public ResponseEntity<?> getEntrancesBySessionCommunities(@PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<EntranceEntity>>(
-                    this.entranceVoteService.checkVoteOfSession(
-                            this.entranceService.getEntrancesByCommunities(
-                                    this.communityListService.getCommunitiesBySession(), pageable)),
+                    this.entranceVoteService.checkVoteOfSession(this.entranceService
+                            .getEntrancesByCommunities(this.communityListService.getCommunitiesBySession(), pageable)),
                     HttpStatus.OK);
         } catch (ApiException e) {
-            return new ResponseEntity<ApiResponse>(
-                    e.getApiResponse(),
-                    e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
         }
     }
 
@@ -111,14 +103,11 @@ public class AccountController {
     public ResponseEntity<?> getEntrancesBySessionFollowTo(@PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
             return new ResponseEntity<Page<EntranceEntity>>(
-                    this.entranceVoteService.checkVoteOfSession(
-                            this.entranceService.getEntrancesByAccounts(
-                                    this.accountFollowService.getFollowingBySession(), pageable)),
+                    this.entranceVoteService.checkVoteOfSession(this.entranceService
+                            .getEntrancesByAccounts(this.accountFollowService.getFollowingBySession(), pageable)),
                     HttpStatus.OK);
         } catch (ApiException e) {
-            return new ResponseEntity<ApiResponse>(
-                    e.getApiResponse(),
-                    e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
         }
     }
 
@@ -126,13 +115,9 @@ public class AccountController {
     public ResponseEntity<?> getAccount(@PathVariable Long id) {
         try {
             return new ResponseEntity<AccountEntity>(
-                    this.accountFollowService.checkFollowOfSession(
-                            this.accountService.getAccount(id)),
-                    HttpStatus.OK);
+                    this.accountFollowService.checkFollowOfSession(this.accountService.getAccount(id)), HttpStatus.OK);
         } catch (ApiException e) {
-            return new ResponseEntity<ApiResponse>(
-                    e.getApiResponse(),
-                    e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
         }
     }
 
@@ -141,14 +126,11 @@ public class AccountController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
 
         try {
-            return new ResponseEntity<Page<CommunityListEntity>>(
-                    this.communityListService.checkCommunitiesFollowOfSession(
-                            this.communityListService.getCommunitiesByUserId(id, pageable)),
+            return new ResponseEntity<Page<CommunityListEntity>>(this.communityListService
+                    .checkCommunitiesFollowOfSession(this.communityListService.getCommunitiesByUserId(id, pageable)),
                     HttpStatus.OK);
         } catch (ApiException e) {
-            return new ResponseEntity<ApiResponse>(
-                    e.getApiResponse(),
-                    e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
         }
     }
 
@@ -157,14 +139,10 @@ public class AccountController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
 
         try {
-            return new ResponseEntity<Page<EntranceEntity>>(
-                    this.entranceVoteService.checkVoteOfSession(
-                            this.entranceService.getEntrancesByAccountId(id, pageable)),
-                    HttpStatus.OK);
+            return new ResponseEntity<Page<EntranceEntity>>(this.entranceVoteService
+                    .checkVoteOfSession(this.entranceService.getEntrancesByAccountId(id, pageable)), HttpStatus.OK);
         } catch (ApiException e) {
-            return new ResponseEntity<ApiResponse>(
-                    e.getApiResponse(),
-                    e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
         }
     }
 
@@ -173,14 +151,10 @@ public class AccountController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
 
         try {
-            return new ResponseEntity<Page<CommentEntity>>(
-                    this.commentVoteService.checkVoteOfSession(
-                            this.commentService.getCommentsByAccountId(id, pageable)),
-                    HttpStatus.OK);
+            return new ResponseEntity<Page<CommentEntity>>(this.commentVoteService
+                    .checkVoteOfSession(this.commentService.getCommentsByAccountId(id, pageable)), HttpStatus.OK);
         } catch (ApiException e) {
-            return new ResponseEntity<ApiResponse>(
-                    e.getApiResponse(),
-                    e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
         }
     }
 
@@ -189,14 +163,11 @@ public class AccountController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
 
         try {
-            return new ResponseEntity<Page<AccountFollowEntity>>(
-                    this.accountFollowService.checkFollowOfSessionToFollows(
-                            this.accountFollowService.getFollowingByAccountId(id, pageable)),
+            return new ResponseEntity<Page<AccountFollowEntity>>(this.accountFollowService
+                    .checkFollowOfSessionToFollows(this.accountFollowService.getFollowingByAccountId(id, pageable)),
                     HttpStatus.OK);
         } catch (ApiException e) {
-            return new ResponseEntity<ApiResponse>(
-                    e.getApiResponse(),
-                    e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
         }
     }
 
@@ -205,14 +176,11 @@ public class AccountController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
 
         try {
-            return new ResponseEntity<Page<AccountFollowEntity>>(
-                    this.accountFollowService.checkFollowOfSessionToFollows(
-                            this.accountFollowService.getFollowersByAccountId(id, pageable)),
+            return new ResponseEntity<Page<AccountFollowEntity>>(this.accountFollowService
+                    .checkFollowOfSessionToFollows(this.accountFollowService.getFollowersByAccountId(id, pageable)),
                     HttpStatus.OK);
         } catch (ApiException e) {
-            return new ResponseEntity<ApiResponse>(
-                    e.getApiResponse(),
-                    e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
         }
     }
 

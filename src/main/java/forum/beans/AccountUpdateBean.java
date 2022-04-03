@@ -9,6 +9,7 @@ public class AccountUpdateBean {
     private String username;
     private String description;
     private boolean isAdmin;
+    private boolean changeImage;
 
     public AccountUpdateBean() {
     }
@@ -33,6 +34,10 @@ public class AccountUpdateBean {
         this.isAdmin = isAdmin;
     }
 
+    public void setChangeImage(boolean changeImage) {
+        this.changeImage = changeImage;
+    }
+
     public String getLogin() {
         return this.login;
     }
@@ -47,6 +52,10 @@ public class AccountUpdateBean {
 
     public String getDescription() {
         return this.description;
+    }
+
+    public boolean getChangeImage() {
+        return this.changeImage;
     }
 
     public boolean isAdmin() {
