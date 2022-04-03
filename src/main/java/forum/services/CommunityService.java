@@ -8,13 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import forum.beans.CommunityBean;
+import forum.constants.FileConstants;
 import forum.entities.CommunityEntity;
 import forum.exceptions.AccountNotFoundException;
 import forum.exceptions.CommunityAlreadyExistsException;
 import forum.exceptions.CommunityNotFoundException;
 import forum.exceptions.IlegalCommunityArgumentsException;
+import forum.exceptions.IlegalFileExtensionException;
 import forum.exceptions.InsufficientPrivilegesException;
 import forum.exceptions.InvalidSessionException;
 import forum.repositories.CommunityRepository;
@@ -27,6 +30,9 @@ public class CommunityService {
 
     @Autowired
     CommunityRepository communityRepository;
+
+    @Autowired
+    FileService fileService;
 
     public Page<CommunityEntity> getAllCommunities(Pageable pageable, String filter) {
         if (filter == null) {
@@ -79,9 +85,10 @@ public class CommunityService {
         this.communityRepository.save(communityEntity);
     }
 
-    public void updateCommunity(Long id, CommunityBean communityBean)
+    public void updateCommunity(Long id, CommunityBean communityBean, MultipartFile file)
             throws IlegalCommunityArgumentsException, InvalidSessionException, AccountNotFoundException,
-            InsufficientPrivilegesException, CommunityNotFoundException, CommunityAlreadyExistsException {
+            InsufficientPrivilegesException, CommunityNotFoundException, CommunityAlreadyExistsException,
+            IlegalFileExtensionException {
         if (communityBean == null || !communityBean.isValid()) {
             throw new IlegalCommunityArgumentsException();
         }
@@ -99,17 +106,19 @@ public class CommunityService {
             throw new CommunityAlreadyExistsException();
         }
 
+        String image = this.fileService.toImage(file, String.format(FileConstants.IMAGE_COMMUNITY_FILE_FORMAT, id),
+                communityBean.getChangeImage());
+
         CommunityEntity communityEntity = this.communityRepository.findById(id).get();
         communityEntity.setName(communityBean.getName());
         communityEntity.setDescription(communityBean.getDescription());
-        communityEntity.setImage(null);
+        communityEntity.setImage(image);
 
         this.communityRepository.save(communityEntity);
     }
 
-    public void deleteAccount(Long id)
-            throws InvalidSessionException, AccountNotFoundException, CommunityNotFoundException,
-            InsufficientPrivilegesException {
+    public void deleteAccount(Long id) throws InvalidSessionException, AccountNotFoundException,
+            CommunityNotFoundException, InsufficientPrivilegesException {
         if (!this.communityRepository.existsById(id)) {
             throw new CommunityNotFoundException();
         }
@@ -119,5 +128,6 @@ public class CommunityService {
         }
 
         this.communityRepository.deleteById(id);
+        this.fileService.removeFile(String.format(FileConstants.IMAGE_COMMUNITY_FILE_FORMAT, id));
     }
 }

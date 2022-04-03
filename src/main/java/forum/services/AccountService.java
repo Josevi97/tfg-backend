@@ -119,7 +119,7 @@ public class AccountService {
             throw new InsufficientPrivilegesException();
         }
 
-        String avatar = this.fileService.toImage(file, String.format(FileConstants.IMAGE_FILE_FORMAT, id),
+        String avatar = this.fileService.toImage(file, String.format(FileConstants.IMAGE_ACCOUNT_FILE_FORMAT, id),
                 accountBean.getChangeImage());
 
         AccountEntity accountEntity = this.accountRepository.findById(id)
@@ -164,6 +164,6 @@ public class AccountService {
         }
 
         this.accountRepository.deleteById(id);
-        this.fileService.removeFile(String.format(FileConstants.IMAGE_FILE_FORMAT, id));
+        this.fileService.removeFile(String.format(FileConstants.IMAGE_ACCOUNT_FILE_FORMAT, id));
     }
 }

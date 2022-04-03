@@ -6,6 +6,7 @@ import forum.helpers.CommunityHelper;
 public class CommunityBean {
     private String name;
     private String description;
+    private boolean changeImage;
 
     public CommunityBean() {
     }
@@ -18,12 +19,20 @@ public class CommunityBean {
         this.description = description;
     }
 
+    public void setChangeImage(boolean changeImage) {
+        this.changeImage = changeImage;
+    }
+
     public String getName() {
         return this.name;
     }
 
     public String getDescription() {
         return this.description;
+    }
+
+    public boolean getChangeImage() {
+        return this.changeImage;
     }
 
     public boolean isValid() {

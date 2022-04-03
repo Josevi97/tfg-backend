@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import forum.beans.CommunityBean;
 import forum.beans.EntranceBean;
@@ -62,8 +64,7 @@ public class CommunityController {
     @GetMapping
     public ResponseEntity<?> getCommunities(@PageableDefault(page = 0, size = 5) Pageable pageable,
             @RequestParam(required = false) String filter) {
-        return new ResponseEntity<Page<CommunityEntity>>(
-                this.communityService.getAllCommunities(pageable, filter),
+        return new ResponseEntity<Page<CommunityEntity>>(this.communityService.getAllCommunities(pageable, filter),
                 HttpStatus.OK);
     }
 
@@ -71,10 +72,8 @@ public class CommunityController {
     public ResponseEntity<?> getRandomCommunities(
             @RequestParam(required = false) @PageableDefault(page = 0, size = 5) List<Long> blackList,
             Pageable pageable) {
-        return new ResponseEntity<Page<CommunityEntity>>(
-                this.communityListService.checkFollowOfSession(
-                        this.communityService.getRandomCommunities(blackList, pageable)),
-                HttpStatus.OK);
+        return new ResponseEntity<Page<CommunityEntity>>(this.communityListService
+                .checkFollowOfSession(this.communityService.getRandomCommunities(blackList, pageable)), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/followers")
@@ -82,37 +81,28 @@ public class CommunityController {
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
 
         try {
-            return new ResponseEntity<Page<CommunityListEntity>>(
-                    this.accountFollowService.checkAccountsFollowOfSession(
-                            this.communityListService.getAccountsByCommunityId(id, pageable)),
-                    HttpStatus.OK);
+            return new ResponseEntity<Page<CommunityListEntity>>(this.accountFollowService.checkAccountsFollowOfSession(
+                    this.communityListService.getAccountsByCommunityId(id, pageable)), HttpStatus.OK);
         } catch (ApiException e) {
-            return new ResponseEntity<ApiResponse>(
-                    e.getApiResponse(),
-                    e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
         }
     }
 
     @GetMapping("/search/{name}")
     public ResponseEntity<?> getCommunitiesByName(@PathVariable String name,
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
-        return new ResponseEntity<Page<CommunityEntity>>(
-                this.communityListService.checkFollowOfSession(
-                        this.communityService.getCommunitiesLikeName(name, pageable)),
-                HttpStatus.OK);
+        return new ResponseEntity<Page<CommunityEntity>>(this.communityListService
+                .checkFollowOfSession(this.communityService.getCommunitiesLikeName(name, pageable)), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCommunity(@PathVariable Long id) {
         try {
             return new ResponseEntity<CommunityEntity>(
-                    this.communityListService.checkFollowOfSession(
-                            this.communityService.getCommunity(id)),
+                    this.communityListService.checkFollowOfSession(this.communityService.getCommunity(id)),
                     HttpStatus.OK);
         } catch (CommunityNotFoundException e) {
-            return new ResponseEntity<ApiResponse>(
-                    e.getApiResponse(),
-                    e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
         }
     }
 
@@ -120,14 +110,10 @@ public class CommunityController {
     public ResponseEntity<?> getEntrancesByCommunityId(@PathVariable Long id,
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
         try {
-            return new ResponseEntity<Page<EntranceEntity>>(
-                    this.entranceVoteService.checkVoteOfSession(
-                            this.entranceService.getEntrancesByCommunityId(id, pageable)),
-                    HttpStatus.OK);
+            return new ResponseEntity<Page<EntranceEntity>>(this.entranceVoteService
+                    .checkVoteOfSession(this.entranceService.getEntrancesByCommunityId(id, pageable)), HttpStatus.OK);
         } catch (CommunityNotFoundException e) {
-            return new ResponseEntity<ApiResponse>(
-                    e.getApiResponse(),
-                    e.getApiResponse().getStatus());
+            return new ResponseEntity<ApiResponse>(e.getApiResponse(), e.getApiResponse().getStatus());
         }
     }
 
@@ -153,8 +139,8 @@ public class CommunityController {
         try {
             this.communityListService.createFollow(id);
             response = new ApiResponse("community follow has been created", HttpStatus.OK);
-        } catch (InvalidSessionException | AccountNotFoundException
-                | CommunityNotFoundException | CommunityAlreadyFollowedException e) {
+        } catch (InvalidSessionException | AccountNotFoundException | CommunityNotFoundException
+                | CommunityAlreadyFollowedException e) {
             response = e.getApiResponse();
         }
 
@@ -177,14 +163,14 @@ public class CommunityController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCommunity(@PathVariable Long id, @RequestBody CommunityBean communityBean) {
+    public ResponseEntity<?> updateCommunity(@PathVariable Long id, @RequestPart(required = false) MultipartFile file,
+            @RequestPart CommunityBean communityBean) {
         ApiResponse response;
 
         try {
-            this.communityService.updateCommunity(id, communityBean);
+            this.communityService.updateCommunity(id, communityBean, file);
             response = new ApiResponse("community has been updated", HttpStatus.OK);
-        } catch (IlegalCommunityArgumentsException | InvalidSessionException | AccountNotFoundException
-                | InsufficientPrivilegesException | CommunityNotFoundException | CommunityAlreadyExistsException e) {
+        } catch (ApiException e) {
             response = e.getApiResponse();
         }
 
@@ -213,8 +199,8 @@ public class CommunityController {
         try {
             this.communityListService.deleteFollow(id);
             response = new ApiResponse("community follow has been deleted", HttpStatus.OK);
-        } catch (InvalidSessionException | AccountNotFoundException
-                | CommunityNotFoundException | CommunityNotFollowedException e) {
+        } catch (InvalidSessionException | AccountNotFoundException | CommunityNotFoundException
+                | CommunityNotFollowedException e) {
             response = e.getApiResponse();
         }
 
