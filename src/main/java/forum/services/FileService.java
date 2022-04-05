@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 import org.springframework.stereotype.Service;
@@ -15,17 +17,17 @@ import forum.exceptions.IlegalFileExtensionException;
 @Service
 public class FileService {
 
-    public String toImage(MultipartFile mFile, String name, boolean bDelete) throws IlegalFileExtensionException {
+    public void toImage(MultipartFile mFile, String name, boolean bDelete) throws IlegalFileExtensionException {
         String path = String.format("%s/%s", FileConstants.STATIC_FILES_ROUTE, name);
         File file = new File(path);
 
         if (mFile == null) {
             if (bDelete) {
                 file.delete();
-                return null;
+                return;
             }
 
-            return name;
+            return;
         }
 
         String extension = mFile.getOriginalFilename().split("\\.")[1];
@@ -39,13 +41,19 @@ public class FileService {
             os.write(mFile.getBytes());
         } catch (IOException e) {
         }
-
-        return name;
     }
 
     public void removeFile(String name) {
         String path = String.format("%s/%s", FileConstants.STATIC_FILES_ROUTE, name);
         new File(path).delete();
+    }
+
+    public String generateName(Long id, String type) {
+        return String.format(FileConstants.IMAGE_FILE_FORMAT, type, id.toString(), this.getCurrentDateFormated());
+    }
+
+    public String getCurrentDateFormated() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyy_MM_dd_HH_mm_ss"));
     }
 
 }

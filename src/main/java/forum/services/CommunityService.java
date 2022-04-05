@@ -106,15 +106,19 @@ public class CommunityService {
             throw new CommunityAlreadyExistsException();
         }
 
-        String image = this.fileService.toImage(file, String.format(FileConstants.IMAGE_COMMUNITY_FILE_FORMAT, id),
-                communityBean.getChangeImage());
-
         CommunityEntity communityEntity = this.communityRepository.findById(id).get();
+
+        String newImage = file != null ? this.fileService.generateName(id, FileConstants.COMMUNITY_FILE_ID) : null;
+        String oldImage = communityEntity.getImage();
+
         communityEntity.setName(communityBean.getName());
         communityEntity.setDescription(communityBean.getDescription());
-        communityEntity.setImage(image);
+        communityEntity.setImage(newImage);
 
-        this.communityRepository.save(communityEntity);
+        CommunityEntity response = this.communityRepository.save(communityEntity);
+
+        this.fileService.toImage(file, newImage, communityBean.getChangeImage());
+        this.fileService.removeFile(oldImage);
     }
 
     public void deleteAccount(Long id) throws InvalidSessionException, AccountNotFoundException,
@@ -127,7 +131,9 @@ public class CommunityService {
             throw new InsufficientPrivilegesException();
         }
 
+        String imageName = this.communityRepository.findById(id).get().getImage();
+
         this.communityRepository.deleteById(id);
-        this.fileService.removeFile(String.format(FileConstants.IMAGE_COMMUNITY_FILE_FORMAT, id));
+        this.fileService.removeFile(imageName);
     }
 }

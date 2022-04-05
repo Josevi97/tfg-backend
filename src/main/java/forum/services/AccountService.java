@@ -93,7 +93,7 @@ public class AccountService {
         this.accountRepository.save(accountEntity);
     }
 
-    public AccountEntity updateAccount(Long id, AccountUpdateBean accountBean, MultipartFile file)
+    public void updateAccount(Long id, AccountUpdateBean accountBean, MultipartFile file)
             throws IlegalAccountArgumentsException, InvalidSessionException, AccountNotFoundException,
             AccountAlreadyExistsException, InsufficientPrivilegesException, IlegalFileExtensionException {
 
@@ -119,19 +119,23 @@ public class AccountService {
             throw new InsufficientPrivilegesException();
         }
 
-        String avatar = this.fileService.toImage(file, String.format(FileConstants.IMAGE_ACCOUNT_FILE_FORMAT, id),
-                accountBean.getChangeImage());
-
         AccountEntity accountEntity = this.accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFoundException());
+
+        String newImage = file != null ? this.fileService.generateName(id, FileConstants.ACCOUNT_FILE_ID) : null;
+        String oldImage = accountEntity.getAvatar();
+
         accountEntity.setLogin(accountBean.getLogin());
         accountEntity.setEmail(accountBean.getEmail());
         accountEntity.setDescription(accountBean.getDescription());
         accountEntity.setUsername(accountBean.getUsername());
-        accountEntity.setAvatar(avatar);
+        accountEntity.setAvatar(newImage);
         accountEntity.setAdmin(accountBean.isAdmin());
 
-        return this.accountRepository.save(accountEntity);
+        AccountEntity response = this.accountRepository.save(accountEntity);
+
+        this.fileService.toImage(file, newImage, accountBean.getChangeImage());
+        this.fileService.removeFile(oldImage);
     }
 
     public void resetPassword(Long id, ResetPasswordBean resetPasswordBean) throws IlegalAccountArgumentsException,
@@ -163,7 +167,9 @@ public class AccountService {
             throw new InsufficientPrivilegesException();
         }
 
+        String imageName = this.accountRepository.findById(id).get().getAvatar();
+
         this.accountRepository.deleteById(id);
-        this.fileService.removeFile(String.format(FileConstants.IMAGE_ACCOUNT_FILE_FORMAT, id));
+        this.fileService.removeFile(imageName);
     }
 }
