@@ -49,7 +49,10 @@ public class FileService {
     }
 
     public String generateName(Long id, String type) {
-        return String.format(FileConstants.IMAGE_FILE_FORMAT, type, id.toString(), this.getCurrentDateFormated());
+        String entityType = type == FileConstants.ACCOUNT_FILE_ID ? "accounts" : "communities";
+        String path = String.format("%s/%s", entityType, FileConstants.IMAGE_FILE_FORMAT);
+
+        return String.format(path, id.toString(), this.getCurrentDateFormated());
     }
 
     public String getCurrentDateFormated() {
