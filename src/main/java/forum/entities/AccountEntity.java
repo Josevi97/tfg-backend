@@ -33,7 +33,7 @@ public class AccountEntity {
     @Column(name = "email", unique = true, length = AccountConstants.MAX_EMAIL_SIZE, nullable = false)
     private String email;
 
-    @Column(name = "password", length = AccountConstants.MAX_PASSWORD_SIZE, nullable = false)
+    @Column(name = "password", length = 255, nullable = false)
     private String password;
 
     @Column(name = "username", length = AccountConstants.MAX_USERNAME_SIZE, nullable = false)

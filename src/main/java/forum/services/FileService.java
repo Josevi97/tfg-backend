@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +18,8 @@ import forum.exceptions.IlegalFileExtensionException;
 
 @Service
 public class FileService {
+
+    Logger log = LoggerFactory.getLogger(FileService.class);
 
     public void toImage(MultipartFile mFile, String name, boolean bDelete) throws IlegalFileExtensionException {
         String path = String.format("%s/%s", FileConstants.STATIC_FILES_ROUTE, name);
@@ -40,6 +44,7 @@ public class FileService {
         try (OutputStream os = new FileOutputStream(file)) {
             os.write(mFile.getBytes());
         } catch (IOException e) {
+            log.error("I am not allowed to write");
         }
     }
 
