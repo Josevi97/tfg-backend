@@ -110,15 +110,18 @@ public class CommunityService {
 
         String newImage = file != null ? this.fileService.generateName(id, FileConstants.COMMUNITY_FILE_ID) : null;
         String oldImage = communityEntity.getImage();
+        String finalImage = communityBean.getChangeImage() ? newImage : oldImage;
 
         communityEntity.setName(communityBean.getName());
         communityEntity.setDescription(communityBean.getDescription());
-        communityEntity.setImage(newImage);
+        communityEntity.setImage(finalImage);
 
-        CommunityEntity response = this.communityRepository.save(communityEntity);
+        this.communityRepository.save(communityEntity);
 
-        this.fileService.toImage(file, newImage, communityBean.getChangeImage());
-        this.fileService.removeFile(oldImage);
+        if (communityBean.getChangeImage()) {
+            this.fileService.toImage(file, newImage, communityBean.getChangeImage());
+            this.fileService.removeFile(oldImage);
+        }
     }
 
     public void deleteAccount(Long id) throws InvalidSessionException, AccountNotFoundException,

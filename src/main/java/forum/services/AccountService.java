@@ -124,18 +124,21 @@ public class AccountService {
 
         String newImage = file != null ? this.fileService.generateName(id, FileConstants.ACCOUNT_FILE_ID) : null;
         String oldImage = accountEntity.getAvatar();
+        String finalImage = accountBean.getChangeImage() ? newImage : oldImage;
 
         accountEntity.setLogin(accountBean.getLogin());
         accountEntity.setEmail(accountBean.getEmail());
         accountEntity.setDescription(accountBean.getDescription());
         accountEntity.setUsername(accountBean.getUsername());
-        accountEntity.setAvatar(newImage);
+        accountEntity.setAvatar(finalImage);
         accountEntity.setAdmin(accountBean.isAdmin());
 
-        AccountEntity response = this.accountRepository.save(accountEntity);
+        this.accountRepository.save(accountEntity);
 
-        this.fileService.toImage(file, newImage, accountBean.getChangeImage());
-        this.fileService.removeFile(oldImage);
+        if (accountBean.getChangeImage()) {
+            this.fileService.toImage(file, newImage, accountBean.getChangeImage());
+            this.fileService.removeFile(oldImage);
+        }
     }
 
     public void resetPassword(Long id, ResetPasswordBean resetPasswordBean) throws IlegalAccountArgumentsException,
